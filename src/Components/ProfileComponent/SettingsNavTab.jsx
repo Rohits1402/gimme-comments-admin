@@ -362,7 +362,7 @@ const SettingsNavTab = ({
         </div>
         <div className="card-body">
           <p>
-            WARNING : By deleting you account, all transactiono, exam results,
+            WARNING : By deleting you account, all transactions, exam results,
             user data will be deleted PERMANANTLY.
             <br />
             <br />
