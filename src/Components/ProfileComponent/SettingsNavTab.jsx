@@ -199,7 +199,7 @@ const SettingsNavTab = ({
                     Change account status to:
                   </label>
                   <select
-                    className="form-select"
+                    className="form-select w-100"
                     id="account_status"
                     value={userStatus}
                     onChange={(e) => {
@@ -253,7 +253,7 @@ const SettingsNavTab = ({
                     Change account role to:
                   </label>
                   <select
-                    className="form-select"
+                    className="form-select w-100"
                     id="account_role"
                     value={userRole}
                     onChange={(e) => {
@@ -292,7 +292,7 @@ const SettingsNavTab = ({
                     <label htmlFor="oldPass">Old Password</label>
                     <input
                       type="password"
-                      className="form-control"
+                      className="form-control w-100"
                       value={passwordData.old_password}
                       onChange={(e) =>
                         setPasswordData({
@@ -310,7 +310,7 @@ const SettingsNavTab = ({
                     <label htmlFor="newPass">New Password</label>
                     <input
                       type="password"
-                      className="form-control"
+                      className="form-control w-100"
                       value={passwordData.new_password}
                       onChange={(e) =>
                         setPasswordData({
@@ -328,7 +328,7 @@ const SettingsNavTab = ({
                     <label htmlFor="confirmPass">Confirm Password</label>
                     <input
                       type="password"
-                      className="form-control"
+                      className="form-control w-100"
                       value={passwordData.new_password_confirm}
                       onChange={(e) =>
                         setPasswordData({

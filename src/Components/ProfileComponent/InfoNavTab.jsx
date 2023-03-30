@@ -107,7 +107,7 @@ const InfoNavTab = ({
                 <label htmlFor="name">Name</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control  w-100"
                   disabled={profileOf !== 'admin'}
                   value={userLocalData.name}
                   onChange={(e) =>
@@ -122,7 +122,7 @@ const InfoNavTab = ({
               <div className="form-group">
                 <label htmlFor="gender">Gender</label>
                 <select
-                  className="form-select"
+                  className="form-select  w-100"
                   id="gender"
                   disabled={profileOf !== 'admin'}
                   value={userLocalData.gender}
@@ -144,7 +144,7 @@ const InfoNavTab = ({
                 <label htmlFor="birthday">Birthday</label>
                 <input
                   type="date"
-                  className="form-control"
+                  className="form-control w-100"
                   disabled={profileOf !== 'admin'}
                   value={userLocalData.birthday}
                   onChange={(e) =>
@@ -189,7 +189,7 @@ const InfoNavTab = ({
                       id="image"
                       type="file"
                       accept="image/png, image/jpg, image/jpeg"
-                      className="form-control"
+                      className="form-control  w-100"
                       onChange={(e) => {
                         setlocalImg(e.target.files[0]);
                       }}

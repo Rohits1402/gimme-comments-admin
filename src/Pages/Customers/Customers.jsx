@@ -32,6 +32,7 @@ const Customers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
+
   // getting customers data from database
   useEffect(() => {
     const fetchCustomersData = async () => {
@@ -204,7 +205,10 @@ const Customers = () => {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1 className="m-0">Customers</h1>
+                <h1 className="m-0">
+                  <i className="nav-icon fas fa-users me-2" />
+                  Customers
+                </h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
@@ -231,20 +235,14 @@ const Customers = () => {
                 />
                 <button
                   type="button"
-                  className="btn btn-outline-dark ms-2 d-flex align-items-center"
+                  className="btn btn-dark ms-2 d-flex align-items-center"
                   onClick={handleDownloadData}
                 >
                   <i className="fa fa-cloud-download me-1" aria-hidden="true" />
                   Download
                 </button>
               </div>
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-md-12">
-                    <div className="form-group"></div>
-                  </div>
-                </div>
-              </div>
+              <div className="card-body"></div>
               <div className="card-footer clearfix d-flex justify-content-center">
                 <button
                   type="button"
