@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
+import { useParams } from 'react-router-dom';
 
 import InfoNavTab from './InfoNavTab';
 import SettingsNavTab from './SettingsNavTab';
@@ -21,7 +22,8 @@ const Toast = Swal.mixin({
 const default_profile_image =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
 
-const Profile = ({ profileOf }) => {
+const ProfileComponent = ({ profileOf }) => {
+  const { userId } = useParams();
   const { setIsLoading } = useStore();
   const [userData, setUserData] = useState({
     profile_image: '',
@@ -39,17 +41,29 @@ const Profile = ({ profileOf }) => {
 
   const fetchProfileData = async () => {
     try {
-      const response = await axios().get('/api/v1/auth/admin/profile/admin');
+      let response;
+      if (userId) {
+        response = await axios().get(`/api/v1/auth/admin/profile/${userId}`);
+      } else {
+        response = await axios().get('/api/v1/auth/admin/profile/admin');
+      }
 
       setUserData(response.data);
       console.log(response.data);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
-      Toast.fire({
-        icon: 'error',
-        title: error.response.data ? error.response.data.msg : error.message,
-      });
+      if (error.response.status === 404) {
+        Toast.fire({
+          icon: 'error',
+          title: `No user found with id ${userId}`,
+        });
+      } else {
+        Toast.fire({
+          icon: 'error',
+          title: error.response.data ? error.response.data.msg : error.message,
+        });
+      }
       setIsLoading(false);
     }
   };
@@ -101,14 +115,6 @@ const Profile = ({ profileOf }) => {
             >
               Settings
             </button>
-            {/* <button
-                    className={`flex-sm-fill text-sm-center nav-link ${
-                      navTab === 3 && 'active'
-                    }`}
-                    onClick={() => setNavTab(3)}
-                  >
-                    Status
-                  </button> */}
           </nav>
 
           {navTab === 1 && (
@@ -135,4 +141,4 @@ const Profile = ({ profileOf }) => {
   );
 };
 
-export default Profile;
+export default ProfileComponent;

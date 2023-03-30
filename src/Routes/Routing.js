@@ -9,6 +9,8 @@ import Footer from '../Layout//Footer';
 import SignIn from '../Pages/SignIn/SignIn';
 import Dashboard from '../Pages/Dashboard/Dashboard';
 import Profile from '../Pages/Profile/Profile';
+import Customers from '../Pages/Customers/Customers';
+import CustomerProfile from '../Pages/Customers/CustomerProfile';
 
 export default function Routing() {
   const { isLoading, setIsLoading } = useStore();
@@ -55,6 +57,8 @@ export default function Routing() {
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/customers/:userId" element={<CustomerProfile />} />
         </Route>
         <Route path="/*" element={<div>Not Found</div>} />
       </Routes>
