@@ -19,6 +19,7 @@ const InfoNavTab = ({
   setUserData,
   setIsLoading,
   fetchProfileData,
+  profileOf,
 }) => {
   const [localImg, setlocalImg] = useState(null);
   const [userLocalData, setUserLocalData] = useState({
@@ -106,6 +107,7 @@ const InfoNavTab = ({
                 <input
                   type="text"
                   className="form-control"
+                  disabled={profileOf !== 'admin'}
                   value={userLocalData.name}
                   onChange={(e) =>
                     setUserLocalData({ ...userLocalData, name: e.target.value })
@@ -121,6 +123,7 @@ const InfoNavTab = ({
                 <select
                   className="form-select"
                   id="gender"
+                  disabled={profileOf !== 'admin'}
                   value={userLocalData.gender}
                   onChange={(e) =>
                     setUserLocalData({
@@ -141,6 +144,7 @@ const InfoNavTab = ({
                 <input
                   type="date"
                   className="form-control"
+                  disabled={profileOf !== 'admin'}
                   value={userLocalData.birthday}
                   onChange={(e) =>
                     setUserLocalData({
@@ -154,56 +158,64 @@ const InfoNavTab = ({
             </div>
           </div>
         </div>
-        <div className="card-footer clearfix">
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={(e) => UpdateProfile()}
-          >
-            Update
-          </button>
-        </div>
+        {profileOf === 'admin' && (
+          <>
+            <div className="card-footer clearfix">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={(e) => UpdateProfile()}
+              >
+                Update
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">User Image</h3>
-        </div>
-        <div className="card-body">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="form-group">
-                <label htmlFor="image">Image</label>
-                <input
-                  id="image"
-                  type="file"
-                  accept="image/png, image/jpg, image/jpeg"
-                  className="form-control"
-                  onChange={(e) => {
-                    setlocalImg(e.target.files[0]);
-                  }}
-                />
+      {profileOf === 'admin' && (
+        <>
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">User Image</h3>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="form-group">
+                    <label htmlFor="image">Image</label>
+                    <input
+                      id="image"
+                      type="file"
+                      accept="image/png, image/jpg, image/jpeg"
+                      className="form-control"
+                      onChange={(e) => {
+                        setlocalImg(e.target.files[0]);
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+            <div className="card-footer clearfix">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={(e) => handleProfileImageUpload(e, 'update')}
+              >
+                Update
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger ms-2"
+                onClick={(e) => handleProfileImageUpload(e, 'delete')}
+              >
+                Remove
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="card-footer clearfix">
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={(e) => handleProfileImageUpload(e, 'update')}
-          >
-            Update
-          </button>
-          <button
-            type="button"
-            className="btn btn-danger ms-2"
-            onClick={(e) => handleProfileImageUpload(e, 'delete')}
-          >
-            Remove
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 };

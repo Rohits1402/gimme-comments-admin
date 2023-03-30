@@ -14,7 +14,12 @@ const Toast = Swal.mixin({
   },
 });
 
-const SettingsNavTab = ({ userData, setIsLoading, fetchProfileData }) => {
+const SettingsNavTab = ({
+  userData,
+  setIsLoading,
+  fetchProfileData,
+  profileOf,
+}) => {
   const [userStatus, setUserStatus] = useState(false);
   const [userRole, setUserRole] = useState('user');
   const [passwordData, setPasswordData] = useState({
@@ -188,152 +193,168 @@ const SettingsNavTab = ({ userData, setIsLoading, fetchProfileData }) => {
                 </span>
               </h6>
 
-              <label htmlFor="account_status" className="form-label mt-2">
-                Change account status to:
-              </label>
-              <select
-                className="form-select"
-                id="account_status"
-                value={userStatus}
-                onChange={(e) => {
-                  setUserStatus(e.target.value === 'true' ? true : false);
-                }}
-              >
-                <option value={true}>Active</option>
-                <option value={false}>Blocked</option>
-              </select>
+              {profileOf !== 'admin' && (
+                <>
+                  <label htmlFor="account_status" className="form-label mt-2">
+                    Change account status to:
+                  </label>
+                  <select
+                    className="form-select"
+                    id="account_status"
+                    value={userStatus}
+                    onChange={(e) => {
+                      setUserStatus(e.target.value === 'true' ? true : false);
+                    }}
+                  >
+                    <option value={true}>Active</option>
+                    <option value={false}>Blocked</option>
+                  </select>
+                </>
+              )}
             </div>
           </div>
         </div>
-        <div className="card-footer clearfix d-flex">
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={(e) => updateUserStatus()}
-          >
-            Update
-          </button>
-        </div>
+        {profileOf !== 'admin' && (
+          <>
+            <div className="card-footer clearfix d-flex">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={(e) => updateUserStatus()}
+              >
+                Update
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">
-            Account Role:{' '}
-            {userData.role === 'admin' ? (
-              <>
-                <span className="badge badge-primary">Admin</span>
-              </>
-            ) : (
-              <>
-                <span className="badge badge-primary">User</span>
-              </>
-            )}
-          </h3>
-        </div>
-        <div className="card-body">
-          <div className="row">
-            <div className="col-md-12">
-              <label htmlFor="account_role" className="form-label mt-2">
-                Change account role to:
-              </label>
-              <select
-                className="form-select"
-                id="account_role"
-                value={userRole}
-                onChange={(e) => {
-                  setUserRole(e.target.value);
-                }}
+      {profileOf !== 'admin' && (
+        <>
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">
+                Account Role:{' '}
+                {userData.role === 'admin' ? (
+                  <>
+                    <span className="badge badge-primary">Admin</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="badge badge-primary">User</span>
+                  </>
+                )}
+              </h3>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-12">
+                  <label htmlFor="account_role" className="form-label mt-2">
+                    Change account role to:
+                  </label>
+                  <select
+                    className="form-select"
+                    id="account_role"
+                    value={userRole}
+                    onChange={(e) => {
+                      setUserRole(e.target.value);
+                    }}
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="card-footer clearfix d-flex">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={(e) => updateUserRole()}
               >
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-              </select>
+                Update
+              </button>
             </div>
           </div>
-        </div>
-        <div className="card-footer clearfix d-flex">
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={(e) => updateUserRole()}
-          >
-            Update
-          </button>
-        </div>
-      </div>
+        </>
+      )}
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Change Password</h3>
-        </div>
-        <div className="card-body">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="form-group">
-                <label htmlFor="oldPass">Old Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={passwordData.old_password}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      old_password: e.target.value,
-                    })
-                  }
-                  id="oldPass"
-                  placeholder="Old Password"
-                />
+      {profileOf === 'admin' && (
+        <>
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">Change Password</h3>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="form-group">
+                    <label htmlFor="oldPass">Old Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      value={passwordData.old_password}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          old_password: e.target.value,
+                        })
+                      }
+                      id="oldPass"
+                      placeholder="Old Password"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="newPass">New Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      value={passwordData.new_password}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          new_password: e.target.value,
+                        })
+                      }
+                      id="newPass"
+                      placeholder="New Password"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="confirmPass">Confirm Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      value={passwordData.new_password_confirm}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          new_password_confirm: e.target.value,
+                        })
+                      }
+                      id="confirmPass"
+                      placeholder="Confirm Password"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="newPass">New Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={passwordData.new_password}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      new_password: e.target.value,
-                    })
-                  }
-                  id="newPass"
-                  placeholder="New Password"
-                />
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="confirmPass">Confirm Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={passwordData.new_password_confirm}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      new_password_confirm: e.target.value,
-                    })
-                  }
-                  id="confirmPass"
-                  placeholder="Confirm Password"
-                />
-              </div>
+            <div className="card-footer clearfix">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={(e) => updatePassword()}
+              >
+                Update
+              </button>
             </div>
           </div>
-        </div>
-        <div className="card-footer clearfix">
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={(e) => updatePassword()}
-          >
-            Update
-          </button>
-        </div>
-      </div>
+        </>
+      )}
 
       <div className="card ">
         <div className="card-header bg-danger">

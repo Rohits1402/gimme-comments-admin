@@ -21,7 +21,7 @@ const Toast = Swal.mixin({
 const default_profile_image =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
 
-const Profile = () => {
+const Profile = ({ profileOf }) => {
   const { setIsLoading } = useStore();
   const [userData, setUserData] = useState({
     profile_image: '',
@@ -117,6 +117,7 @@ const Profile = () => {
               setUserData={setUserData}
               setIsLoading={setIsLoading}
               fetchProfileData={fetchProfileData}
+              profileOf={profileOf}
             />
           )}
           {navTab === 2 && (
@@ -125,6 +126,7 @@ const Profile = () => {
               setUserData={setUserData}
               setIsLoading={setIsLoading}
               fetchProfileData={fetchProfileData}
+              profileOf={profileOf}
             />
           )}
         </div>

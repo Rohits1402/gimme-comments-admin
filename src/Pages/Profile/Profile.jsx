@@ -21,7 +21,7 @@ const Profile = () => {
                 </ol>
               </div>
             </div>
-            <ProfileComponent />
+            <ProfileComponent profileOf="admin" />
           </div>
         </div>
       </div>
