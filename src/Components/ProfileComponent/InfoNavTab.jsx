@@ -58,16 +58,17 @@ const InfoNavTab = ({
 
   const handleProfileImageUpload = async (e, action) => {
     e.preventDefault();
-    if (!localImg) {
-      Toast.fire({ icon: 'warning', title: 'Please provide Image' });
-      return;
-    }
 
     let imageData = new FormData();
 
     if (action === 'delete') {
       imageData.append('profile-image', null);
     } else {
+      if (!localImg) {
+        Toast.fire({ icon: 'warning', title: 'Please provide Image' });
+        return;
+      }
+
       imageData.append('profile-image', localImg);
     }
 
