@@ -16,9 +16,9 @@ export default function Menu() {
     <>
       <aside
         className="main-sidebar sidebar-dark-primary elevation-4"
-        style={{ background: '#775DA8' }}
+        style={{ background: '#775DA8', position: 'fixed' }}
       >
-        <div className="sidebar">
+        <div className="sidebar" style={{ height: '99vh' }}>
           {/* <div className="form-inline">
             <div className="input-group mt-2" data-widget="sidebar-search">
               <input
@@ -36,7 +36,7 @@ export default function Menu() {
           </div> */}
           <nav className="mt-2">
             <ul
-              className="nav nav-pills nav-sidebar flex-column"
+              className="nav nav-pills nav-sidebar flex-column flex-nowrap"
               data-widget="treeview"
               role="menu"
               data-accordion="false"
@@ -157,7 +157,6 @@ export default function Menu() {
                   <p>Log Out</p>
                 </a>
               </li>
-
               {/* <li className="nav-header">QUESTIONS</li>
                             <li className="nav-item">
                                 <a href="#" className="nav-link">

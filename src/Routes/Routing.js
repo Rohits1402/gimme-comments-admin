@@ -11,8 +11,8 @@ import Dashboard from '../Pages/Dashboard/Dashboard';
 import Profile from '../Pages/Profile/Profile';
 
 export default function Routing() {
-  const { isLoading } = useStore();
-  console.log(isLoading);
+  const { isLoading, setIsLoading } = useStore();
+
   return (
     <div
       className="wrapper"
@@ -21,8 +21,8 @@ export default function Routing() {
       <div
         style={{
           display: isLoading ? 'grid' : 'none',
-          position: 'absolute',
-          zIndex: 1000,
+          position: 'fixed',
+          zIndex: 100,
           height: '100vh',
           width: '100vw',
           placeItems: 'center',
@@ -30,8 +30,24 @@ export default function Routing() {
         }}
       >
         <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <div className="visually-hidden">Loading...</div>
         </div>
+      </div>
+      <div
+        style={{
+          display: isLoading ? 'flex' : 'none',
+          position: 'fixed',
+          zIndex: 1000,
+          height: '100vh',
+          width: '100vw',
+          justifyContent: 'center',
+          alignItems: 'end',
+          padding: '20px',
+        }}
+      >
+        <button className="btn btn-dark" onClick={() => setIsLoading(false)}>
+          Close
+        </button>
       </div>
       <Routes>
         <Route path="/sign-in" element={<SignIn />} />
