@@ -19,7 +19,7 @@ const InfoNavTab = ({
   setUserData,
   setIsLoading,
   fetchProfileData,
-  profileOf,
+  currUserId,
 }) => {
   const [localImg, setlocalImg] = useState(null);
   const [userLocalData, setUserLocalData] = useState({
@@ -108,7 +108,7 @@ const InfoNavTab = ({
                 <input
                   type="text"
                   className="form-control  w-100"
-                  disabled={profileOf !== 'admin'}
+                  disabled={currUserId !== 'admin'}
                   value={userLocalData.name}
                   onChange={(e) =>
                     setUserLocalData({ ...userLocalData, name: e.target.value })
@@ -124,7 +124,7 @@ const InfoNavTab = ({
                 <select
                   className="form-select  w-100"
                   id="gender"
-                  disabled={profileOf !== 'admin'}
+                  disabled={currUserId !== 'admin'}
                   value={userLocalData.gender}
                   onChange={(e) =>
                     setUserLocalData({
@@ -145,7 +145,7 @@ const InfoNavTab = ({
                 <input
                   type="date"
                   className="form-control w-100"
-                  disabled={profileOf !== 'admin'}
+                  disabled={currUserId !== 'admin'}
                   value={userLocalData.birthday}
                   onChange={(e) =>
                     setUserLocalData({
@@ -159,7 +159,7 @@ const InfoNavTab = ({
             </div>
           </div>
         </div>
-        {profileOf === 'admin' && (
+        {currUserId === 'admin' && (
           <>
             <div className="card-footer clearfix">
               <button
@@ -174,7 +174,7 @@ const InfoNavTab = ({
         )}
       </div>
 
-      {profileOf === 'admin' && (
+      {currUserId === 'admin' && (
         <>
           <div className="card">
             <div className="card-header">

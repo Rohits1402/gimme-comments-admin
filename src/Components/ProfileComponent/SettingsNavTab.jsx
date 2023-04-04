@@ -18,7 +18,7 @@ const SettingsNavTab = ({
   userData,
   setIsLoading,
   fetchProfileData,
-  profileOf,
+  currUserId,
 }) => {
   const [userStatus, setUserStatus] = useState(false);
   const [userRole, setUserRole] = useState('user');
@@ -37,7 +37,7 @@ const SettingsNavTab = ({
     setIsLoading(true);
     try {
       const response = await axios().patch(
-        '/api/v1/auth/admin/profile/update-status/admin',
+        `/api/v1/auth/admin/profile/update-status/${currUserId}`,
         { status: userStatus }
       );
       fetchProfileData();
@@ -56,7 +56,7 @@ const SettingsNavTab = ({
     setIsLoading(true);
     try {
       const response = await axios().patch(
-        '/api/v1/auth/admin/profile/update-role/admin',
+        `/api/v1/auth/admin/profile/update-role/${currUserId}`,
         { role: userRole }
       );
       fetchProfileData();
@@ -193,7 +193,7 @@ const SettingsNavTab = ({
                 </span>
               </h6>
 
-              {profileOf !== 'admin' && (
+              {currUserId !== 'admin' && (
                 <>
                   <label htmlFor="account_status" className="form-label mt-2">
                     Change account status to:
@@ -214,7 +214,7 @@ const SettingsNavTab = ({
             </div>
           </div>
         </div>
-        {profileOf !== 'admin' && (
+        {currUserId !== 'admin' && (
           <>
             <div className="card-footer clearfix d-flex">
               <button
@@ -229,7 +229,7 @@ const SettingsNavTab = ({
         )}
       </div>
 
-      {profileOf !== 'admin' && (
+      {currUserId !== 'admin' && (
         <>
           <div className="card">
             <div className="card-header">
@@ -279,7 +279,7 @@ const SettingsNavTab = ({
         </>
       )}
 
-      {profileOf === 'admin' && (
+      {currUserId === 'admin' && (
         <>
           <div className="card">
             <div className="card-header">
@@ -356,29 +356,33 @@ const SettingsNavTab = ({
         </>
       )}
 
-      <div className="card ">
-        <div className="card-header bg-danger">
-          <h3 className="card-title">Delete Account</h3>
-        </div>
-        <div className="card-body">
-          <p>
-            WARNING : By deleting you account, all transactions, exam results,
-            user data will be deleted PERMANANTLY.
-            <br />
-            <br />
-            This CANNOT be undone.
-          </p>
-        </div>
-        <div className="card-footer bg-danger-subtle clearfix">
-          <button
-            type="button"
-            className="btn btn-danger"
-            onClick={(e) => handleAccountDelete()}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
+      {currUserId === 'admin' && (
+        <>
+          <div className="card ">
+            <div className="card-header bg-danger">
+              <h3 className="card-title">Delete Account</h3>
+            </div>
+            <div className="card-body">
+              <p>
+                WARNING : By deleting you account, all transactions, exam
+                results, user data will be deleted PERMANANTLY.
+                <br />
+                <br />
+                This CANNOT be undone.
+              </p>
+            </div>
+            <div className="card-footer bg-danger-subtle clearfix">
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={(e) => handleAccountDelete()}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

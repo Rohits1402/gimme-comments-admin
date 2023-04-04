@@ -22,7 +22,7 @@ const Toast = Swal.mixin({
 const default_profile_image =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
 
-const ProfileComponent = ({ profileOf }) => {
+const ProfileComponent = () => {
   const { userId } = useParams();
   const { setIsLoading } = useStore();
   const [userData, setUserData] = useState({
@@ -36,17 +36,24 @@ const ProfileComponent = ({ profileOf }) => {
     phone_no_verified: '',
     account_active: '',
   });
+  const [currUserId, setCurrUserId] = useState('');
+
+  useEffect(() => {
+    if (userId) {
+      setCurrUserId(userId);
+    } else {
+      setCurrUserId('admin');
+    }
+  }, [userId]);
 
   const [navTab, setNavTab] = useState(1);
 
   const fetchProfileData = async () => {
+    if (currUserId === '') return;
     try {
-      let response;
-      if (userId) {
-        response = await axios().get(`/api/v1/auth/admin/profile/${userId}`);
-      } else {
-        response = await axios().get('/api/v1/auth/admin/profile/admin');
-      }
+      const response = await axios().get(
+        `/api/v1/auth/admin/profile/${currUserId}`
+      );
 
       setUserData(response.data);
       console.log(response.data);
@@ -72,7 +79,7 @@ const ProfileComponent = ({ profileOf }) => {
     setIsLoading(true);
     fetchProfileData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currUserId]);
 
   return (
     <>
@@ -123,7 +130,7 @@ const ProfileComponent = ({ profileOf }) => {
               setUserData={setUserData}
               setIsLoading={setIsLoading}
               fetchProfileData={fetchProfileData}
-              profileOf={profileOf}
+              currUserId={currUserId}
             />
           )}
           {navTab === 2 && (
@@ -132,7 +139,7 @@ const ProfileComponent = ({ profileOf }) => {
               setUserData={setUserData}
               setIsLoading={setIsLoading}
               fetchProfileData={fetchProfileData}
-              profileOf={profileOf}
+              currUserId={currUserId}
             />
           )}
         </div>

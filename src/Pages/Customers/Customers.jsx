@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
+import { useNavigate } from 'react-router-dom';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -16,7 +17,12 @@ const Toast = Swal.mixin({
   },
 });
 
+const default_profile_image =
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
+
 const Customers = () => {
+  const navigate = useNavigate();
+
   const { setIsLoading } = useStore(0);
   const [customersData, setCustomersData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -28,7 +34,7 @@ const Customers = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [searchTermFilter, setSearchTermFilter] = useState('');
   const [sortingOn, setSortingOn] = useState('name');
-  const [sortingMethod, setSortingMethod] = useState('asc');
+  const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
@@ -131,14 +137,24 @@ const Customers = () => {
     const tempFilteredData = filteredData;
 
     const asc = (a, b) => {
-      if (a[sortingOn].toLowerCase() > b[sortingOn].toLowerCase()) return 1;
-      else if (a[sortingOn].toLowerCase() < b[sortingOn].toLowerCase())
+      if (
+        String(a[sortingOn]).toLowerCase() > String(b[sortingOn]).toLowerCase()
+      )
+        return 1;
+      else if (
+        String(a[sortingOn]).toLowerCase() < String(b[sortingOn]).toLowerCase()
+      )
         return -1;
       else return 0;
     };
     const des = (a, b) => {
-      if (a[sortingOn].toLowerCase() < b[sortingOn].toLowerCase()) return 1;
-      else if (a[sortingOn].toLowerCase() > b[sortingOn].toLowerCase())
+      if (
+        String(a[sortingOn]).toLowerCase() < String(b[sortingOn]).toLowerCase()
+      )
+        return 1;
+      else if (
+        String(a[sortingOn]).toLowerCase() > String(b[sortingOn]).toLowerCase()
+      )
         return -1;
       else return 0;
     };
@@ -152,7 +168,7 @@ const Customers = () => {
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     setPaginatedData(sortedData.slice(indexOfFirstUser, indexOfLastUser));
-  }, [currentPage, sortedData, usersPerPage]);
+  }, [currentPage, sortedData, usersPerPage, sortingMethod]);
 
   const prevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -242,7 +258,179 @@ const Customers = () => {
                   Download
                 </button>
               </div>
-              <div className="card-body"></div>
+              <div className="card-body" style={{ overflow: 'auto' }}>
+                <table class="table table-hover" style={{ minWidth: '840px' }}>
+                  <thead className="table-light">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th
+                        scope="col"
+                        onClick={() => {
+                          setSortingMethod(!sortingMethod);
+                          setSortingOn('name');
+                        }}
+                      >
+                        Name
+                        <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                      </th>
+                      <th
+                        scope="col"
+                        onClick={() => {
+                          setSortingMethod(!sortingMethod);
+                          setSortingOn('email');
+                        }}
+                      >
+                        Email
+                        <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                      </th>
+                      <th
+                        scope="col"
+                        onClick={() => {
+                          setSortingMethod(!sortingMethod);
+                          setSortingOn('phone_no');
+                        }}
+                      >
+                        Phone no.
+                        <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                      </th>
+                      <th scope="col">
+                        <select
+                          className="form-select w-100"
+                          value={genderFilter}
+                          onChange={(e) => {
+                            setGenderFilter(e.target.value);
+                          }}
+                        >
+                          <option value="" selected>
+                            Gender
+                          </option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Others">Others</option>
+                        </select>
+                      </th>
+                      <th scope="col">
+                        <select
+                          className="form-select w-100"
+                          value={roleFilter}
+                          onChange={(e) => {
+                            setRoleFilter(e.target.value);
+                          }}
+                        >
+                          <option value="" selected>
+                            Role
+                          </option>
+                          <option value="user">User</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </th>
+                      <th scope="col">
+                        <select
+                          className="form-select w-100"
+                          value={statusFilter}
+                          onChange={(e) => {
+                            setStatusFilter(e.target.value);
+                          }}
+                        >
+                          <option value="" selected>
+                            Status
+                          </option>
+                          <option value="true">Active</option>
+                          <option value="false">Blocked</option>
+                        </select>
+                      </th>
+                      <th scope="col">Info</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider">
+                    {paginatedData.length === 0 ? (
+                      <tr>
+                        <td colspan="8" className="text-center">
+                          No data
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedData.map((data, index) => {
+                        return (
+                          <tr key={data._id}>
+                            <th scope="row">
+                              {currentPage * usersPerPage -
+                                usersPerPage +
+                                index +
+                                1}
+                            </th>
+                            <td
+                              className="d-flex align-items-center
+                            "
+                            >
+                              <img
+                                src={
+                                  data.profile_image || default_profile_image
+                                }
+                                alt="profile"
+                                style={{
+                                  width: '30px',
+                                  height: '30px',
+                                  borderRadius: '50%',
+                                  objectFit: 'cover',
+                                  marginRight: '5px',
+                                }}
+                              />
+                              {data.name}
+                            </td>
+                            <td>{data.email}</td>
+                            <td>+{data.phone_no}</td>
+                            <td className="text-center">{data.gender}</td>
+                            <td className="text-center">
+                              {data.role === 'admin' ? (
+                                <>
+                                  <span className="badge badge-info">
+                                    Admin
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="badge badge-info">User</span>
+                                </>
+                              )}
+                            </td>
+                            <td className="text-center">
+                              {data.account_active === true ? (
+                                <>
+                                  <span className="badge badge-success">
+                                    Active
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="badge badge-danger">
+                                    Blocked
+                                  </span>
+                                </>
+                              )}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  navigate(`/customers/${data._id}`)
+                                }
+                                className="btn btn-info py-0"
+                              >
+                                {' '}
+                                <i
+                                  className="fa fa-info-circle"
+                                  aria-hidden="true"
+                                />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
               <div className="card-footer clearfix d-flex justify-content-center">
                 <button
                   type="button"
