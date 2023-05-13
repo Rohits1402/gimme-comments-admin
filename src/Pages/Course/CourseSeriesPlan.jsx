@@ -265,7 +265,6 @@ const Customers = () => {
                       <th scope="col">#</th>
                       <th
                         scope="col"
-                        className="w-100"
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
                           setSortingOn('name');

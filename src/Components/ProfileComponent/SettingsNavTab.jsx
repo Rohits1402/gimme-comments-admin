@@ -101,7 +101,7 @@ const SettingsNavTab = ({
     Swal.fire({
       icon: 'warning',
       title: 'Are you sure?',
-      html: '<h5>This account will be deleted?</h5>',
+      html: '<h5>This account will be deleted</h5>',
       showCancelButton: true,
       confirmButtonText: `Delete`,
       confirmButtonColor: '#D14343',

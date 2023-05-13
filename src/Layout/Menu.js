@@ -136,6 +136,19 @@ export default function Menu() {
                   </li>
                 </ul>
               </li> */}
+              <li className="nav-item active">
+                <Link to="/course-categories" className={`nav-link `}>
+                  <i className="nav-icon fa fa-files-o" />
+                  <p>Course Categories</p>
+                </Link>
+              </li>
+
+              <li className="nav-item active">
+                <Link to="/courses" className={`nav-link `}>
+                  <i className="nav-icon fa fa-book" />
+                  <p>Courses</p>
+                </Link>
+              </li>
 
               <li className="nav-item active">
                 <Link to="/customers" className={`nav-link `}>
