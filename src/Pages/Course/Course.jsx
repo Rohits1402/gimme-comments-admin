@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -21,6 +21,7 @@ const default_course_image =
   'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
 
 const Course = () => {
+  const location = useLocation();
   const { setIsLoading } = useStore();
   const [coursesData, setCoursesData] = useState([]);
   const [courseCategoriesData, setCourseCategoriesData] = useState([]);
@@ -35,6 +36,13 @@ const Course = () => {
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
+
+  // setting category according to redirect
+  useEffect(() => {
+    if (!courseCategoriesData.length || !location.state) return;
+
+    setCourseCategoryFilter(location.state.id);
+  }, [courseCategoriesData.length, location.state]);
 
   // getting course categories data from database
   const fetchCoursesData = async () => {
@@ -207,6 +215,7 @@ const Course = () => {
                       <th
                         scope="col"
                         className="w-100"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
                           setSortingOn('course_title');
@@ -218,14 +227,13 @@ const Course = () => {
                       <th scope="col">
                         <select
                           className="form-select"
+                          defaultValue=""
                           value={courseCategoryFilter}
                           onChange={(e) => {
                             setCourseCategoryFilter(e.target.value);
                           }}
                         >
-                          <option value="" selected>
-                            Category
-                          </option>
+                          <option value="">Category</option>
                           {/* <option value="Male">Male</option> */}
                           {courseCategoriesData.map((category) => {
                             return (
@@ -652,6 +660,7 @@ const ManageCourseModal = ({
               <select
                 className="form-select w-100"
                 id="course-category"
+                defaultValue=""
                 value={localData.of_course_category}
                 onChange={(e) =>
                   setLocalData({
@@ -660,9 +669,7 @@ const ManageCourseModal = ({
                   })
                 }
               >
-                <option value="" selected>
-                  Category
-                </option>
+                <option value="">Category</option>
                 {/* <option value="Male">Male</option> */}
                 {courseCategoriesData.map((category) => {
                   return (

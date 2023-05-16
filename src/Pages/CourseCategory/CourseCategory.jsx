@@ -175,6 +175,7 @@ const CourseCategory = () => {
                       <th
                         scope="col"
                         className="w-100"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
                           setSortingOn('category_name');
@@ -260,7 +261,9 @@ const TableContent = ({
               <td>
                 <button
                   type="button"
-                  onClick={() => navigate(`/courses`)}
+                  onClick={() =>
+                    navigate(`/courses`, { state: { id: data._id } })
+                  }
                   className="btn btn-info py-0 d-flex align-items-center"
                 >
                   <i

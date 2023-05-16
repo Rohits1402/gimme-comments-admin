@@ -266,6 +266,7 @@ const Customers = () => {
                       <th
                         scope="col"
                         className="w-100"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
                           setSortingOn('name');
@@ -276,6 +277,7 @@ const Customers = () => {
                       </th>
                       <th
                         scope="col"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
                           setSortingOn('email');
@@ -286,6 +288,7 @@ const Customers = () => {
                       </th>
                       <th
                         scope="col"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
                           setSortingOn('phone_no');

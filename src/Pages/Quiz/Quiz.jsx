@@ -296,14 +296,13 @@ const Customers = () => {
                       <th scope="col">
                         <select
                           className="form-select w-100"
+                          defaultValue=""
                           value={genderFilter}
                           onChange={(e) => {
                             setGenderFilter(e.target.value);
                           }}
                         >
-                          <option value="" selected>
-                            Gender
-                          </option>
+                          <option value="">Gender</option>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
                           <option value="Others">Others</option>
@@ -312,14 +311,13 @@ const Customers = () => {
                       <th scope="col">
                         <select
                           className="form-select w-100"
+                          defaultValue=""
                           value={roleFilter}
                           onChange={(e) => {
                             setRoleFilter(e.target.value);
                           }}
                         >
-                          <option value="" selected>
-                            Role
-                          </option>
+                          <option value="">Role</option>
                           <option value="user">User</option>
                           <option value="admin">Admin</option>
                         </select>
@@ -332,9 +330,7 @@ const Customers = () => {
                             setStatusFilter(e.target.value);
                           }}
                         >
-                          <option value="" selected>
-                            Status
-                          </option>
+                          <option value="">Status</option>
                           <option value="true">Active</option>
                           <option value="false">Blocked</option>
                         </select>
