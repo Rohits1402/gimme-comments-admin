@@ -53,7 +53,7 @@ const Course = () => {
 
       const categoryResponse = await axios().get(`/api/v1/courses/category`);
       setCourseCategoriesData(categoryResponse.data.categories);
-      console.log(categoryResponse.data.categories);
+      // console.log(categoryResponse.data.categories);
 
       console.log(courseResponse.data.courses);
       setIsLoading(false);
