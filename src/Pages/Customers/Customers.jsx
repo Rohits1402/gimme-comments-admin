@@ -296,7 +296,7 @@ const Customers = () => {
                       </th>
                       <th scope="col">
                         <select
-                          className="form-select w-100"
+                          className="form-select"
                           value={genderFilter}
                           onChange={(e) => {
                             setGenderFilter(e.target.value);
@@ -312,7 +312,7 @@ const Customers = () => {
                       </th>
                       <th scope="col">
                         <select
-                          className="form-select w-100"
+                          className="form-select"
                           value={roleFilter}
                           onChange={(e) => {
                             setRoleFilter(e.target.value);
@@ -327,7 +327,7 @@ const Customers = () => {
                       </th>
                       <th scope="col">
                         <select
-                          className="form-select w-100"
+                          className="form-select"
                           value={statusFilter}
                           onChange={(e) => {
                             setStatusFilter(e.target.value);

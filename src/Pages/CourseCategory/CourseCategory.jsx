@@ -17,7 +17,7 @@ const Toast = Swal.mixin({
   },
 });
 
-const Customers = () => {
+const CourseCategory = () => {
   const { setIsLoading } = useStore();
   const [courseCategoriesData, setCourseCategoriesData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -51,13 +51,12 @@ const Customers = () => {
 
   useEffect(() => {
     fetchCourseCategoriesData();
-    console.log('this called');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsLoading]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
-    // filtering according to genderFilter
+    // filtering according to search term filter
     const tempCourseCategoriesData = courseCategoriesData;
     const tempSearchTermFilterData = tempCourseCategoriesData.filter(
       (category) => {
@@ -232,7 +231,7 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default CourseCategory;
 
 const TableContent = ({
   fetchCourseCategoriesData,
@@ -262,7 +261,7 @@ const TableContent = ({
                 <button
                   type="button"
                   onClick={() => navigate(`/courses`)}
-                  className="btn btn-info py-0"
+                  className="btn btn-info py-0 d-flex align-items-center"
                 >
                   <i
                     className="fa fa-pencil-square-o me-1"
@@ -362,7 +361,7 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
           });
           setTimeout(function () {
             fetchCourseCategoriesData();
-          }, 100);
+          }, 500);
           CloseButton.current.click();
           setIsLoading(false);
         } catch (error) {
@@ -407,7 +406,7 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                {data ? <>Manage Category {data._id}</> : <>Add Category</>}
+                {data ? <>Manage Category</> : <>Add Category</>}
               </h5>
               <button
                 type="button"

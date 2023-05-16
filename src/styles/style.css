@@ -57,3 +57,8 @@ code {
 .p-show-hide:hover {
   background-color: #eee;
 }
+
+/* custom style */
+select {
+  width: 100px !important;
+}
