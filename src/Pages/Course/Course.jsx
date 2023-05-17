@@ -48,7 +48,9 @@ const Course = () => {
   const fetchCoursesData = async () => {
     try {
       setIsLoading(true);
-      const courseResponse = await axios().get(`/api/v1/courses/course`);
+      const courseResponse = await axios().get(
+        `/api/v1/courses/course/:of_category`
+      );
       setCoursesData(courseResponse.data.courses);
 
       const categoryResponse = await axios().get(`/api/v1/courses/category`);
