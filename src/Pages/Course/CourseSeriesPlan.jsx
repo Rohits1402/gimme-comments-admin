@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -17,120 +17,76 @@ const Toast = Swal.mixin({
   },
 });
 
-const default_profile_image =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
-
-const Customers = () => {
+const CourseSeriesPlan = () => {
   const navigate = useNavigate();
+  const { courseId, courseSeriesId } = useParams();
+  const { setIsLoading } = useStore();
 
-  const { setIsLoading } = useStore(0);
-  const [customersData, setCustomersData] = useState([]);
+  const [courseSeriesPlanData, setCourseSeriesPlanData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
 
-  const [genderFilter, setGenderFilter] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const [searchTermFilter, setSearchTermFilter] = useState('');
-  const [sortingOn, setSortingOn] = useState('name');
+  const [sortingOn, setSortingOn] = useState('plan_description');
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
 
-  // getting customers data from database
+  // getting course series plan data from database
+  const fetchCourseSeriesPlanData = async () => {
+    if (!courseSeriesId) return;
+    try {
+      setIsLoading(true);
+      const response = await axios().get(
+        `/api/v1/courses/plan/${courseSeriesId}/ `
+      );
+
+      setCourseSeriesPlanData(response.data.plans);
+      console.log(response.data.plans);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
+      });
+      setIsLoading(false);
+      navigate('/courses');
+    }
+  };
+
   useEffect(() => {
-    const fetchCustomersData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios().get(`/api/v1/auth/admin/profile/`);
-        setCustomersData(response.data);
-        console.log(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        Toast.fire({
-          icon: 'error',
-          title: error.response.data ? error.response.data.msg : error.message,
-        });
-        setIsLoading(false);
-      }
-    };
-    fetchCustomersData();
-  }, [setIsLoading]);
+    fetchCourseSeriesPlanData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseSeriesId]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
-    // filtering according to genderFilter
-    const tempCustomersData = customersData;
-    const tempGenderFilteredData = tempCustomersData.filter((user) => {
-      switch (genderFilter) {
-        case 'Male':
-          if (user.gender === 'Male') return true;
-          else return false;
-        case 'Female':
-          if (user.gender === 'Female') return true;
-          else return false;
-        case 'Others':
-          if (user.gender === 'Others') return true;
-          else return false;
-        default:
-          return true;
-      }
-    });
+    const tempCourseSeriesPlansData = courseSeriesPlanData;
 
-    // filtering according to roleFilter
-    const tempRoleFilteredData = tempGenderFilteredData.filter((user) => {
-      switch (roleFilter) {
-        case 'user':
-          if (user.role === 'user') return true;
-          else return false;
-        case 'admin':
-          if (user.role === 'admin') return true;
-          else return false;
-        default:
-          return true;
-      }
-    });
-
-    // filtering according to statusFilter
-    const tempStatusFilterData = tempRoleFilteredData.filter((user) => {
-      switch (statusFilter) {
-        case 'true':
-          if (user.account_active === true) return true;
-          else return false;
-        case 'false':
-          if (user.account_active === false) return true;
-          else return false;
-        default:
-          return true;
-      }
-    });
-
-    // filtering according to searchTermFilter
-    const tempSearchTermFilterData = tempStatusFilterData.filter((user) => {
-      if (searchTermFilter === '') {
-        return true;
-      } else {
-        if (
-          user['name'].toLowerCase().includes(searchTermFilter.toLowerCase()) ||
-          user['email']
-            .toLowerCase()
-            .includes(searchTermFilter.toLowerCase()) ||
-          String(user['phone_no'])
-            .toLowerCase()
-            .includes(searchTermFilter.toLowerCase())
-        ) {
+    // filtering according to search term filter
+    const tempSearchTermFilterData = tempCourseSeriesPlansData.filter(
+      (course) => {
+        if (searchTermFilter === '') {
           return true;
         } else {
-          return false;
+          if (
+            course['plan_description']
+              .toLowerCase()
+              .includes(searchTermFilter.toLowerCase())
+          ) {
+            return true;
+          } else {
+            return false;
+          }
         }
       }
-    });
+    );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [customersData, genderFilter, roleFilter, searchTermFilter, statusFilter]);
+  }, [courseSeriesPlanData, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -179,41 +135,6 @@ const Customers = () => {
     if (currentPage < totalPage) setCurrentPage(currentPage + 1);
   };
 
-  // downloading data in Excel / CSV format
-  const handleDownloadData = () => {
-    const items = sortedData;
-
-    const replacer = (key, value) => (value === null ? '' : value); // specify how you want to handle null values here
-    // const header = Object.keys(items[0])
-    const header = [
-      'name',
-      'email',
-      'phone_no',
-      'gender',
-      'role',
-      'account_active',
-    ];
-    const csv = [
-      header.join(','), // header row first
-      ...items.map((row) =>
-        header
-          .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-          .join(',')
-      ),
-    ].join('\r\n');
-
-    // Create link and download
-    var link = document.createElement('a');
-    // link.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv));
-    link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURI(csv));
-
-    link.setAttribute('download', 'User-Details');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <>
       <div className="content-wrapper">
@@ -222,8 +143,8 @@ const Customers = () => {
             <div className="row mb-2">
               <div className="col-sm-6">
                 <h1 className="m-0">
-                  <i className="nav-icon fas fa-users me-2" />
-                  Customers
+                  <i className="nav-icon fa fa-inr me-2" />
+                  Series Plan
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -231,43 +152,48 @@ const Customers = () => {
                   <li className="breadcrumb-item">
                     <Link to="/">Dashboard</Link>
                   </li>
-                  <li className="breadcrumb-item active">Customers</li>
+                  <li className="breadcrumb-item">
+                    <Link to="/courses">Course</Link>
+                  </li>
+                  <li className="breadcrumb-item">
+                    <Link to={`/courses/${courseId}`}>Course Series</Link>
+                  </li>
+                  <li className="breadcrumb-item active">Series Plan</li>
                 </ol>
               </div>
             </div>
-            {/* <Link to="/customers/:userId">Profile</Link> */}
 
             <div className="card mt-5">
               <div className="card-header d-flex">
                 <input
                   type="text"
                   className="form-control flex-grow-1"
-                  placeholder="Search for name, email, phone no"
+                  placeholder="Search for course plan description"
                   autoFocus={true}
                   value={searchTermFilter}
                   onChange={(e) => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
-                <button
-                  type="button"
-                  className="btn btn-dark ms-2 d-flex align-items-center"
-                  onClick={handleDownloadData}
-                >
-                  <i className="fa fa-cloud-download me-1" aria-hidden="true" />
-                  Download
-                </button>
+                <ManageCourseModal
+                  fetchCourseSeriesPlanData={fetchCourseSeriesPlanData}
+                />
               </div>
               <div className="card-body" style={{ overflow: 'auto' }}>
-                <table class="table table-hover" style={{ minWidth: '840px' }}>
+                <table
+                  className="table table-hover"
+                  style={{ minWidth: '840px' }}
+                >
                   <thead className="table-light">
                     <tr>
                       <th scope="col">#</th>
                       <th
                         scope="col"
+                        className="w-100"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('name');
+                          setSortingOn('plan_description');
                         }}
                       >
                         Name
@@ -275,159 +201,40 @@ const Customers = () => {
                       </th>
                       <th
                         scope="col"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('email');
+                          setSortingOn('plan_duration');
                         }}
                       >
-                        Email
-                        <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                        <div className="d-flex">
+                          Duration
+                          <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                        </div>
                       </th>
                       <th
                         scope="col"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('phone_no');
+                          setSortingOn('plan_discounted_price');
                         }}
                       >
-                        Phone no.
-                        <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                        <div className="d-flex">
+                          Price
+                          <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                        </div>
                       </th>
-                      <th scope="col">
-                        <select
-                          className="form-select w-100"
-                          value={genderFilter}
-                          onChange={(e) => {
-                            setGenderFilter(e.target.value);
-                          }}
-                        >
-                          <option value="" selected>
-                            Gender
-                          </option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Others">Others</option>
-                        </select>
-                      </th>
-                      <th scope="col">
-                        <select
-                          className="form-select w-100"
-                          value={roleFilter}
-                          onChange={(e) => {
-                            setRoleFilter(e.target.value);
-                          }}
-                        >
-                          <option value="" selected>
-                            Role
-                          </option>
-                          <option value="user">User</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                      </th>
-                      <th scope="col">
-                        <select
-                          className="form-select w-100"
-                          value={statusFilter}
-                          onChange={(e) => {
-                            setStatusFilter(e.target.value);
-                          }}
-                        >
-                          <option value="" selected>
-                            Status
-                          </option>
-                          <option value="true">Active</option>
-                          <option value="false">Blocked</option>
-                        </select>
-                      </th>
-                      <th scope="col">Info</th>
+                      <th scope="col">Manage</th>
                     </tr>
                   </thead>
-                  <tbody class="table-group-divider">
-                    {paginatedData.length === 0 ? (
-                      <tr>
-                        <td colspan="8" className="text-center">
-                          No data
-                        </td>
-                      </tr>
-                    ) : (
-                      paginatedData.map((data, index) => {
-                        return (
-                          <tr key={data._id}>
-                            <th scope="row">
-                              {currentPage * usersPerPage -
-                                usersPerPage +
-                                index +
-                                1}
-                            </th>
-                            <td
-                              className="d-flex align-items-center
-                            "
-                            >
-                              <img
-                                src={
-                                  data.profile_image || default_profile_image
-                                }
-                                alt="profile"
-                                style={{
-                                  width: '30px',
-                                  height: '30px',
-                                  borderRadius: '50%',
-                                  objectFit: 'cover',
-                                  marginRight: '5px',
-                                }}
-                              />
-                              {data.name}
-                            </td>
-                            <td>{data.email}</td>
-                            <td>+{data.phone_no}</td>
-                            <td className="text-center">{data.gender}</td>
-                            <td className="text-center">
-                              {data.role === 'admin' ? (
-                                <>
-                                  <span className="badge badge-info">
-                                    Admin
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="badge badge-info">User</span>
-                                </>
-                              )}
-                            </td>
-                            <td className="text-center">
-                              {data.account_active === true ? (
-                                <>
-                                  <span className="badge badge-success">
-                                    Active
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="badge badge-danger">
-                                    Blocked
-                                  </span>
-                                </>
-                              )}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  navigate(`/customers/${data._id}`)
-                                }
-                                className="btn btn-info py-0"
-                              >
-                                {' '}
-                                <i
-                                  className="fa fa-info-circle"
-                                  aria-hidden="true"
-                                />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
+                  <tbody className="table-group-divider">
+                    <TableContent
+                      fetchCourseSeriesPlanData={fetchCourseSeriesPlanData}
+                      paginatedData={paginatedData}
+                      currentPage={currentPage}
+                      usersPerPage={usersPerPage}
+                    />
                   </tbody>
                 </table>
               </div>
@@ -445,7 +252,7 @@ const Customers = () => {
                   className="form-control"
                   style={{ width: '100px', textAlign: 'center' }}
                   value={`${currentPage}/${
-                    Math.ceil(customersData.length / usersPerPage) || 1
+                    Math.ceil(courseSeriesPlanData.length / usersPerPage) || 1
                   }`}
                   readOnly={true}
                 />
@@ -465,4 +272,305 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default CourseSeriesPlan;
+
+const TableContent = ({
+  fetchCourseSeriesPlanData,
+  paginatedData,
+  currentPage,
+  usersPerPage,
+}) => {
+  return (
+    <>
+      {paginatedData.length === 0 ? (
+        <tr>
+          <td colSpan="8" className="text-center">
+            No data
+          </td>
+        </tr>
+      ) : (
+        paginatedData.map((data, index) => {
+          return (
+            <tr key={data._id}>
+              <th scope="row">
+                {currentPage * usersPerPage - usersPerPage + index + 1}
+              </th>
+              <td>{data.plan_description}</td>
+              <td>{data.plan_duration} mo</td>
+              <td>
+                ₹{data.plan_discounted_price}{' '}
+                <span style={{ textDecoration: 'line-through', color: 'grey' }}>
+                  ₹{data.plan_original_price}
+                </span>
+              </td>
+              <td>
+                <ManageCourseModal
+                  data={data}
+                  fetchCourseSeriesPlanData={fetchCourseSeriesPlanData}
+                />
+              </td>
+            </tr>
+          );
+        })
+      )}
+    </>
+  );
+};
+
+const ManageCourseModal = ({ data, fetchCourseSeriesPlanData }) => {
+  const { courseSeriesId } = useParams();
+  const CloseButton = useRef();
+  const { setIsLoading } = useStore();
+  const initialLocalData = {
+    plan_description: '',
+    plan_duration: 0,
+    plan_original_price: 0,
+    plan_discounted_price: 0,
+  };
+
+  const [localData, setLocalData] = useState(initialLocalData);
+
+  useEffect(() => {
+    if (!data) return;
+
+    setLocalData(data);
+  }, [data]);
+
+  const handleAddCourseSeriesPlan = async () => {
+    try {
+      setIsLoading(true);
+      await axios().post(`/api/v1/courses/plan/${courseSeriesId}`, {
+        ...localData,
+      });
+      Toast.fire({
+        icon: 'success',
+        title: 'Course Series added',
+      });
+      fetchCourseSeriesPlanData();
+      setLocalData(initialLocalData);
+      CloseButton.current.click();
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateCourseSeriesPlan = async () => {
+    try {
+      setIsLoading(true);
+      await axios().patch(`/api/v1/courses/plan/${data._id}`, localData);
+      Toast.fire({
+        icon: 'success',
+        title: 'Course Series Plan updated',
+      });
+      fetchCourseSeriesPlanData();
+      CloseButton.current.click();
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteCourseSeriesPlan = async () => {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      html: '<h6>This Plan will get permanently deleted</h6>',
+      showCancelButton: true,
+      confirmButtonText: `Delete`,
+      confirmButtonColor: '#D14343',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setIsLoading(true);
+          await axios().delete(`/api/v1/courses/plan/${data._id}`);
+          Toast.fire({
+            icon: 'success',
+            title: 'Course Series Plan deleted',
+          });
+          setTimeout(function () {
+            fetchCourseSeriesPlanData();
+          }, 500);
+          CloseButton.current.click();
+          setIsLoading(false);
+        } catch (error) {
+          console.log(error);
+          Toast.fire({
+            icon: 'error',
+            title: error.response.data
+              ? error.response.data.msg
+              : error.message,
+          });
+          setIsLoading(false);
+        }
+      }
+    });
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        className="btn btn-dark ms-2 d-flex align-items-center"
+        data-toggle="modal"
+        data-target={data ? `#${data._id}` : '#add-course-series-plan-modal'}
+      >
+        {data ? (
+          <i className="fa fa-cog" aria-hidden="true" />
+        ) : (
+          <>
+            <i className="fa fa-plus me-1" aria-hidden="true" /> Plan
+          </>
+        )}
+      </button>
+      <div
+        className="modal fade"
+        id={data ? data._id : 'add-course-series-plan-modal'}
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                {data ? <>Manage Plan {data._id}</> : <>Add Plan</>}
+              </h5>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                ref={CloseButton}
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <label htmlFor="plan_description" className="form-label mt-2">
+                Plan Description
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="plan_description"
+                value={localData.plan_description}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    plan_description: e.target.value,
+                  })
+                }
+              />
+              <label htmlFor="plan_duration" className="form-label mt-2">
+                Plan Duration (in months)
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="plan_duration"
+                value={localData.plan_duration}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    plan_duration: Number(e.target.value),
+                  })
+                }
+              />
+              <label htmlFor="plan_original_price" className="form-label mt-2">
+                Plan Original Price (in ₹)
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="plan_original_price"
+                value={localData.plan_original_price}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    plan_original_price: Number(e.target.value),
+                  })
+                }
+              />
+              <label
+                htmlFor="plan_discounted_price"
+                className="form-label mt-2"
+              >
+                Plan Discounted Price (in ₹)
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="plan_discounted_price"
+                value={localData.plan_discounted_price}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    plan_discounted_price: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <div className="modal-footer">
+              {data ? (
+                <>
+                  {/* Manage */}
+                  <button
+                    type="button"
+                    className="btn btn-danger me-auto"
+                    onClick={handleDeleteCourseSeriesPlan}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={handleUpdateCourseSeriesPlan}
+                  >
+                    Save changes
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Add New */}
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={handleAddCourseSeriesPlan}
+                  >
+                    Add
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

@@ -34,7 +34,7 @@ const CourseSeries = () => {
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
 
-  // getting course categories data from database
+  // getting course series data from database
   const fetchCourseSeriesData = async () => {
     if (!courseId) return;
     try {
@@ -192,7 +192,21 @@ const CourseSeries = () => {
                         Name
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
-                      <th scope="col">Duration</th>
+                      <th
+                        scope="col"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          setSortingMethod(!sortingMethod);
+                          setSortingOn('series_duration');
+                        }}
+                      >
+                        <div className="d-flex">
+                          Duration
+                          <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                        </div>
+                      </th>
+
+                      {/* <th scope="col">Duration</th> */}
                       <th scope="col">Plans</th>
                       <th scope="col">Manage</th>
                     </tr>

@@ -31,7 +31,7 @@ const Course = () => {
 
   const [searchTermFilter, setSearchTermFilter] = useState('');
   const [courseCategoryFilter, setCourseCategoryFilter] = useState('');
-  const [sortingOn, setSortingOn] = useState('category_name');
+  const [sortingOn, setSortingOn] = useState('course_title');
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
