@@ -216,7 +216,7 @@ const QuizSection = () => {
                   </thead>
                   <tbody className="table-group-divider">
                     <TableContent
-                      fetchQuizSectionD={fetchQuizSectionData}
+                      fetchQuizSectionData={fetchQuizSectionData}
                       paginatedData={paginatedData}
                       currentPage={currentPage}
                       usersPerPage={usersPerPage}

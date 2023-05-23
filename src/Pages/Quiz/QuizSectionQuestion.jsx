@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import QuizSectionQuestionOption from './QuizSectionQuestionOption';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -17,120 +18,105 @@ const Toast = Swal.mixin({
   },
 });
 
-const default_profile_image =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
-
-const Customers = () => {
+const QuizSectionQuestion = () => {
   const navigate = useNavigate();
+  const { courseId, quizId, sectionId } = useParams();
+  const { setIsLoading } = useStore();
 
-  const { setIsLoading } = useStore(0);
-  const [customersData, setCustomersData] = useState([]);
+  const [quizSectionQuestionData, setQuizSectionQuestionData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
 
-  const [genderFilter, setGenderFilter] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const [searchTermFilter, setSearchTermFilter] = useState('');
-  const [sortingOn, setSortingOn] = useState('name');
+  const [questionTypeFilter, setQuestionTypeFilter] = useState('');
+  const [sortingOn, setSortingOn] = useState('question_title');
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
 
-  // getting customers data from database
-  useEffect(() => {
-    const fetchCustomersData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios().get(`/api/v1/auth/admin/profile/`);
-        setCustomersData(response.data);
-        console.log(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-        Toast.fire({
-          icon: 'error',
-          title: error.response.data ? error.response.data.msg : error.message,
-        });
-        setIsLoading(false);
+  // getting quiz section questions data from database
+  const fetchQuizSectionQuestionData = async (modalToOpenId) => {
+    if (!courseId || !quizId || !sectionId) return;
+    try {
+      setIsLoading(true);
+      const response = await axios().get(`/api/v1/quiz/question/${sectionId}`);
+
+      setQuizSectionQuestionData(response.data.questions);
+      console.log(response.data.questions);
+
+      if (modalToOpenId) {
+        setTimeout(() => {
+          let mod = document.getElementById(`open-${modalToOpenId}`);
+          if (mod) mod.click();
+        }, 500);
       }
-    };
-    fetchCustomersData();
-  }, [setIsLoading]);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
+      });
+      setIsLoading(false);
+      navigate('/courses');
+    }
+  };
+
+  useEffect(() => {
+    fetchQuizSectionQuestionData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
-    // filtering according to genderFilter
-    const tempCustomersData = customersData;
-    const tempGenderFilteredData = tempCustomersData.filter((user) => {
-      switch (genderFilter) {
-        case 'Male':
-          if (user.gender === 'Male') return true;
-          else return false;
-        case 'Female':
-          if (user.gender === 'Female') return true;
-          else return false;
-        case 'Others':
-          if (user.gender === 'Others') return true;
-          else return false;
-        default:
-          return true;
-      }
-    });
+    const tempQuizSectionQuestionData = quizSectionQuestionData;
 
-    // filtering according to roleFilter
-    const tempRoleFilteredData = tempGenderFilteredData.filter((user) => {
-      switch (roleFilter) {
-        case 'user':
-          if (user.role === 'user') return true;
-          else return false;
-        case 'admin':
-          if (user.role === 'admin') return true;
-          else return false;
-        default:
-          return true;
-      }
-    });
-
-    // filtering according to statusFilter
-    const tempStatusFilterData = tempRoleFilteredData.filter((user) => {
-      switch (statusFilter) {
-        case 'true':
-          if (user.account_active === true) return true;
-          else return false;
-        case 'false':
-          if (user.account_active === false) return true;
-          else return false;
-        default:
-          return true;
-      }
-    });
-
-    // filtering according to searchTermFilter
-    const tempSearchTermFilterData = tempStatusFilterData.filter((user) => {
-      if (searchTermFilter === '') {
-        return true;
-      } else {
-        if (
-          user['name'].toLowerCase().includes(searchTermFilter.toLowerCase()) ||
-          user['email']
-            .toLowerCase()
-            .includes(searchTermFilter.toLowerCase()) ||
-          String(user['phone_no'])
-            .toLowerCase()
-            .includes(searchTermFilter.toLowerCase())
-        ) {
-          return true;
-        } else {
-          return false;
+    // filtering accordin to question type filter
+    const tempQuestionTypeFilteredData = tempQuizSectionQuestionData.filter(
+      (ques) => {
+        switch (questionTypeFilter) {
+          case 'scq':
+            if (ques.question_type === 'scq') return true;
+            else return false;
+          case 'mcq':
+            if (ques.question_type === 'mcq') return true;
+            else return false;
+          case 'bool':
+            if (ques.question_type === 'bool') return true;
+            else return false;
+          case 'essay':
+            if (ques.question_type === 'essay') return true;
+            else return false;
+          default:
+            return true;
         }
       }
-    });
+    );
+
+    // filtering according to search term filter
+    const tempSearchTermFilterData = tempQuestionTypeFilteredData.filter(
+      (course) => {
+        if (searchTermFilter === '') {
+          return true;
+        } else {
+          if (
+            course['question_title']
+              .toLowerCase()
+              .includes(searchTermFilter.toLowerCase())
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      }
+    );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [customersData, genderFilter, roleFilter, searchTermFilter, statusFilter]);
+  }, [questionTypeFilter, quizSectionQuestionData, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -179,41 +165,6 @@ const Customers = () => {
     if (currentPage < totalPage) setCurrentPage(currentPage + 1);
   };
 
-  // downloading data in Excel / CSV format
-  const handleDownloadData = () => {
-    const items = sortedData;
-
-    const replacer = (key, value) => (value === null ? '' : value); // specify how you want to handle null values here
-    // const header = Object.keys(items[0])
-    const header = [
-      'name',
-      'email',
-      'phone_no',
-      'gender',
-      'role',
-      'account_active',
-    ];
-    const csv = [
-      header.join(','), // header row first
-      ...items.map((row) =>
-        header
-          .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-          .join(',')
-      ),
-    ].join('\r\n');
-
-    // Create link and download
-    var link = document.createElement('a');
-    // link.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv));
-    link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURI(csv));
-
-    link.setAttribute('download', 'User-Details');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <>
       <div className="content-wrapper">
@@ -222,8 +173,8 @@ const Customers = () => {
             <div className="row mb-2">
               <div className="col-sm-6">
                 <h1 className="m-0">
-                  <i className="nav-icon fas fa-users me-2" />
-                  Customers
+                  <i className="nav-icon fa fa-graduation-cap me-2" />
+                  Section Question
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -231,203 +182,97 @@ const Customers = () => {
                   <li className="breadcrumb-item">
                     <Link to="/">Dashboard</Link>
                   </li>
-                  <li className="breadcrumb-item active">Customers</li>
+                  <li className="breadcrumb-item">
+                    <Link to="/courses">Course</Link>
+                  </li>
+                  <li className="breadcrumb-item">
+                    <Link to={`/quiz/${courseId}`}>Quiz</Link>
+                  </li>
+                  <li className="breadcrumb-item">
+                    <Link to={`/quiz/${courseId}/${quizId}`}>Quiz Section</Link>
+                  </li>
+                  <li className="breadcrumb-item active">Section Question</li>
                 </ol>
               </div>
             </div>
-            {/* <Link to="/customers/:userId">Profile</Link> */}
 
             <div className="card mt-5">
               <div className="card-header d-flex">
                 <input
                   type="text"
                   className="form-control flex-grow-1"
-                  placeholder="Search for name, email, phone no"
+                  placeholder="Search for section question"
                   autoFocus={true}
                   value={searchTermFilter}
                   onChange={(e) => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
-                <button
-                  type="button"
-                  className="btn btn-dark ms-2 d-flex align-items-center"
-                  onClick={handleDownloadData}
-                >
-                  <i className="fa fa-cloud-download me-1" aria-hidden="true" />
-                  Download
-                </button>
+                <ManageCourseModal
+                  fetchQuizSectionQuestionData={fetchQuizSectionQuestionData}
+                />
               </div>
               <div className="card-body" style={{ overflow: 'auto' }}>
-                <table class="table table-hover" style={{ minWidth: '840px' }}>
+                <table
+                  className="table table-hover"
+                  style={{ minWidth: '840px' }}
+                >
                   <thead className="table-light">
                     <tr>
                       <th scope="col">#</th>
                       <th
                         scope="col"
+                        className="w-100"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('name');
+                          setSortingOn('question_title');
                         }}
                       >
                         Name
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
+                      <th scope="col">
+                        <select
+                          className="form-select"
+                          value={questionTypeFilter}
+                          onChange={(e) => {
+                            setQuestionTypeFilter(e.target.value);
+                          }}
+                        >
+                          <option value="">Type</option>
+                          <option value="scq">Single Choice</option>
+                          <option value="mcq">Multiple Choice</option>
+                          <option value="bool">True / False</option>
+                          <option value="essay">Essay</option>
+                        </select>
+                      </th>
+
                       <th
                         scope="col"
+                        className="w-100"
+                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('email');
+                          setSortingOn('question_marks');
                         }}
                       >
-                        Email
+                        Marks
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
-                      <th
-                        scope="col"
-                        onClick={() => {
-                          setSortingMethod(!sortingMethod);
-                          setSortingOn('phone_no');
-                        }}
-                      >
-                        Phone no.
-                        <i className="ms-2 fa fa-sort" aria-hidden="true" />
-                      </th>
-                      <th scope="col">
-                        <select
-                          className="form-select w-100"
-                          value={genderFilter}
-                          onChange={(e) => {
-                            setGenderFilter(e.target.value);
-                          }}
-                        >
-                          <option value="" selected>
-                            Gender
-                          </option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Others">Others</option>
-                        </select>
-                      </th>
-                      <th scope="col">
-                        <select
-                          className="form-select w-100"
-                          value={roleFilter}
-                          onChange={(e) => {
-                            setRoleFilter(e.target.value);
-                          }}
-                        >
-                          <option value="" selected>
-                            Role
-                          </option>
-                          <option value="user">User</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                      </th>
-                      <th scope="col">
-                        <select
-                          className="form-select w-100"
-                          value={statusFilter}
-                          onChange={(e) => {
-                            setStatusFilter(e.target.value);
-                          }}
-                        >
-                          <option value="" selected>
-                            Status
-                          </option>
-                          <option value="true">Active</option>
-                          <option value="false">Blocked</option>
-                        </select>
-                      </th>
-                      <th scope="col">Info</th>
+
+                      <th scope="col">Manage</th>
                     </tr>
                   </thead>
-                  <tbody class="table-group-divider">
-                    {paginatedData.length === 0 ? (
-                      <tr>
-                        <td colspan="8" className="text-center">
-                          No data
-                        </td>
-                      </tr>
-                    ) : (
-                      paginatedData.map((data, index) => {
-                        return (
-                          <tr key={data._id}>
-                            <th scope="row">
-                              {currentPage * usersPerPage -
-                                usersPerPage +
-                                index +
-                                1}
-                            </th>
-                            <td
-                              className="d-flex align-items-center
-                            "
-                            >
-                              <img
-                                src={
-                                  data.profile_image || default_profile_image
-                                }
-                                alt="profile"
-                                style={{
-                                  width: '30px',
-                                  height: '30px',
-                                  borderRadius: '50%',
-                                  objectFit: 'cover',
-                                  marginRight: '5px',
-                                }}
-                              />
-                              {data.name}
-                            </td>
-                            <td>{data.email}</td>
-                            <td>+{data.phone_no}</td>
-                            <td className="text-center">{data.gender}</td>
-                            <td className="text-center">
-                              {data.role === 'admin' ? (
-                                <>
-                                  <span className="badge badge-info">
-                                    Admin
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="badge badge-info">User</span>
-                                </>
-                              )}
-                            </td>
-                            <td className="text-center">
-                              {data.account_active === true ? (
-                                <>
-                                  <span className="badge badge-success">
-                                    Active
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="badge badge-danger">
-                                    Blocked
-                                  </span>
-                                </>
-                              )}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  navigate(`/customers/${data._id}`)
-                                }
-                                className="btn btn-info py-0"
-                              >
-                                {' '}
-                                <i
-                                  className="fa fa-info-circle"
-                                  aria-hidden="true"
-                                />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
+                  <tbody className="table-group-divider">
+                    <TableContent
+                      fetchQuizSectionQuestionData={
+                        fetchQuizSectionQuestionData
+                      }
+                      paginatedData={paginatedData}
+                      currentPage={currentPage}
+                      usersPerPage={usersPerPage}
+                    />
                   </tbody>
                 </table>
               </div>
@@ -445,7 +290,8 @@ const Customers = () => {
                   className="form-control"
                   style={{ width: '100px', textAlign: 'center' }}
                   value={`${currentPage}/${
-                    Math.ceil(customersData.length / usersPerPage) || 1
+                    Math.ceil(quizSectionQuestionData.length / usersPerPage) ||
+                    1
                   }`}
                   readOnly={true}
                 />
@@ -465,4 +311,378 @@ const Customers = () => {
   );
 };
 
-export default Customers;
+export default QuizSectionQuestion;
+
+const TableContent = ({
+  fetchQuizSectionQuestionData,
+  paginatedData,
+  currentPage,
+  usersPerPage,
+}) => {
+  return (
+    <>
+      {paginatedData.length === 0 ? (
+        <tr>
+          <td colSpan="8" className="text-center">
+            No data
+          </td>
+        </tr>
+      ) : (
+        paginatedData.map((data, index) => {
+          return (
+            <tr key={data._id}>
+              <th scope="row">
+                Q{currentPage * usersPerPage - usersPerPage + index + 1}.
+              </th>
+              <td>{data.question_title}</td>
+              <td>{data.question_type}</td>
+              <td>{data.question_marks}</td>
+              <td>
+                <ManageCourseModal
+                  data={data}
+                  fetchQuizSectionQuestionData={fetchQuizSectionQuestionData}
+                />
+              </td>
+            </tr>
+          );
+        })
+      )}
+    </>
+  );
+};
+
+const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
+  const { sectionId } = useParams();
+  const CloseButton = useRef();
+  const { setIsLoading } = useStore();
+  const initialLocalData = {
+    question_title: '',
+    question_answer_explanation: '',
+    question_type: 'scq',
+    question_duration: 1,
+    question_marks: 1,
+    question_is_correct: true,
+  };
+
+  const [localData, setLocalData] = useState(initialLocalData);
+
+  useEffect(() => {
+    if (!data) return;
+
+    setLocalData(data);
+  }, [data]);
+
+  const handleAddQuizSectionQuestion = async () => {
+    try {
+      setIsLoading(true);
+      const res = await axios().post(`/api/v1/quiz/question/${sectionId}`, {
+        ...localData,
+      });
+      Toast.fire({
+        icon: 'success',
+        title: 'Section Question added',
+      });
+      fetchQuizSectionQuestionData(res.data.question._id);
+      setLocalData(initialLocalData);
+      CloseButton.current.click();
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateQuizSectionQuestion = async () => {
+    try {
+      setIsLoading(true);
+      await axios().patch(`/api/v1/quiz/question/${data._id}`, localData);
+      Toast.fire({
+        icon: 'success',
+        title: 'Section Question updated',
+      });
+      fetchQuizSectionQuestionData();
+      CloseButton.current.click();
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteQuizSectionQuestion = async () => {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      html: '<h6>This question will get permanently deleted</h6>',
+      showCancelButton: true,
+      confirmButtonText: `Delete`,
+      confirmButtonColor: '#D14343',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setIsLoading(true);
+          await axios().delete(`/api/v1/quiz/question/${data._id}`);
+          Toast.fire({
+            icon: 'success',
+            title: 'Section Question deleted',
+          });
+          setTimeout(function () {
+            fetchQuizSectionQuestionData();
+          }, 500);
+          CloseButton.current.click();
+          setIsLoading(false);
+        } catch (error) {
+          console.log(error);
+          Toast.fire({
+            icon: 'error',
+            title: error.response.data
+              ? error.response.data.msg
+              : error.message,
+          });
+          setIsLoading(false);
+        }
+      }
+    });
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        className="btn btn-dark ms-2 d-flex align-items-center"
+        data-toggle="modal"
+        id={data ? `open-${data._id}` : 'open-add-quiz-modal'}
+        data-target={data ? `#${data._id}` : '#add-quiz-section-question-modal'}
+      >
+        {data ? (
+          <i className="fa fa-cog" aria-hidden="true" />
+        ) : (
+          <>
+            <i className="fa fa-plus me-1" aria-hidden="true" /> Question
+          </>
+        )}
+      </button>
+      <div
+        className="modal fade"
+        id={data ? data._id : 'add-quiz-section-question-modal'}
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                {data ? <>Manage Question</> : <>Add Question</>}
+              </h5>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                ref={CloseButton}
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <label htmlFor="question_title" className="form-label mt-2">
+                Question
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="question_title"
+                value={localData.question_title}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    question_title: e.target.value,
+                  })
+                }
+              />
+              <label
+                htmlFor="question_answer_explanation"
+                className="form-label mt-2"
+              >
+                Answer Explanation
+              </label>
+              <textarea
+                type="text"
+                className="form-control"
+                id="question_answer_explanation"
+                value={localData.question_answer_explanation}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    question_answer_explanation: e.target.value,
+                  })
+                }
+              />
+              <div className="row">
+                <div className="col-12 col-md-4">
+                  <label htmlFor="question_type" className="form-label mt-2">
+                    Type
+                  </label>
+                  <select
+                    className="form-select w-100"
+                    id="question_type"
+                    value={localData.question_type}
+                    onChange={(e) => {
+                      setLocalData(e.target.value);
+                    }}
+                  >
+                    <option value="scq">Single Choice</option>
+                    <option value="mcq">Multiple Choice</option>
+                    <option value="bool">True / False</option>
+                    <option value="essay">Essay</option>
+                  </select>
+                </div>
+                <div className="col-12 col-md-4">
+                  <label
+                    htmlFor="question_duration"
+                    className="form-label mt-2"
+                  >
+                    Duration (in min)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="question_duration"
+                    value={localData.question_duration}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_duration: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <div className="col-12 col-md-4">
+                  <label htmlFor="question_marks" className="form-label mt-2">
+                    Marks
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="question_marks"
+                    value={localData.question_marks}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_marks: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              {data && (
+                <QuizSectionQuestionOption
+                  question_type={localData.question_type}
+                  questionId={data._id}
+                />
+              )}
+              {/* 
+              {localData.question_type !== 'essay' &&
+                localData.question_options.map((option) => {
+                  return (
+                    <>
+                      <div
+                        className="border border-1 rounded-1 d-flex justify-content-start align-items-center p-2 mt-2"
+                        style={{
+                          backgroundColor: option.is_correct
+                            ? '#23d483'
+                            : '#ff959e',
+                        }}
+                      >
+                        <div>
+                            <img
+                              src={option.option_image}
+                              alt=""
+                              style={{
+                                width: '50px',
+                                height: '50px',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => window.open(option.option_image, '_blank')}
+                            />
+                          </div>
+                        <p
+                          style={{
+                            wordBreak: 'break-word',
+                            flex: '1',
+                            margin: '0 5px',
+                          }}
+                        >
+                          {option.option_title}
+                        </p>
+                      </div>
+                    </>
+                  );
+                })} */}
+
+              {/* <AddOptions localData={localData} setLocalData={setLocalData} /> */}
+            </div>
+
+            <div className="modal-footer">
+              {data ? (
+                <>
+                  {/* Manage */}
+                  <button
+                    type="button"
+                    className="btn btn-danger me-auto"
+                    onClick={handleDeleteQuizSectionQuestion}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={handleUpdateQuizSectionQuestion}
+                  >
+                    Save changes
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Add New */}
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={handleAddQuizSectionQuestion}
+                  >
+                    Add
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

@@ -35,7 +35,7 @@ const Quiz = () => {
   const usersPerPage = 20;
 
   // getting quiz data from database
-  const fetchQuizData = async () => {
+  const fetchQuizData = async (modalToOpenId) => {
     if (!courseId) return;
     try {
       setIsLoading(true);
@@ -43,6 +43,14 @@ const Quiz = () => {
 
       setQuizData(response.data.quizzes);
       console.log(response.data.quizzes);
+
+      // if (modalToOpenId) {
+      //   console.log(modalToOpenId);
+      //   const mod = document.getElementById(`#open${modalToOpenId}`);
+      //   console.log(mod);
+      //   mod.click();
+      // }
+
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -342,6 +350,7 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
         title: 'Quiz added',
       });
       fetchQuizData();
+      // fetchQuizData(res.data.quiz._id);
       setLocalData(initialLocalData);
       CloseButton.current.click();
       setIsLoading(false);
@@ -418,6 +427,7 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
         type="button"
         className="btn btn-dark ms-2 d-flex align-items-center"
         data-toggle="modal"
+        // id={data ? `#open${data._id}` : '#open-add-quiz-modal'}
         data-target={data ? `#${data._id}` : '#add-quiz-modal'}
       >
         {data ? (
