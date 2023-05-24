@@ -178,7 +178,7 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
 
     const formData = new FormData();
 
-    formData.append('option-image', ImageToUpload);
+    formData.append('option_image', ImageToUpload);
 
     await axios().patch(`/api/v1/quiz/option-image/${idOfDoc}`, formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

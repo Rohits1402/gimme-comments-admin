@@ -305,9 +305,7 @@ const Customers = () => {
                             setGenderFilter(e.target.value);
                           }}
                         >
-                          <option value="" selected>
-                            Gender
-                          </option>
+                          <option value="">Gender</option>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
                           <option value="Others">Others</option>
@@ -321,9 +319,7 @@ const Customers = () => {
                             setRoleFilter(e.target.value);
                           }}
                         >
-                          <option value="" selected>
-                            Role
-                          </option>
+                          <option value="">Role</option>
                           <option value="user">User</option>
                           <option value="admin">Admin</option>
                         </select>
@@ -349,7 +345,7 @@ const Customers = () => {
                   <tbody class="table-group-divider">
                     {paginatedData.length === 0 ? (
                       <tr>
-                        <td colspan="8" className="text-center">
+                        <td colSpan="8" className="text-center">
                           No data
                         </td>
                       </tr>

@@ -364,6 +364,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
     question_is_correct: true,
   };
 
+  const [imageData, setImageData] = useState(null);
   const [localData, setLocalData] = useState(initialLocalData);
 
   useEffect(() => {
@@ -406,6 +407,41 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
       });
       fetchQuizSectionQuestionData();
       CloseButton.current.click();
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  // image upload
+  const handleImageUpload = async (deleteImage) => {
+    setIsLoading(true);
+
+    let ImageToUpload = imageData;
+    if (deleteImage) {
+      ImageToUpload = null;
+    } else {
+      if (!ImageToUpload) return;
+    }
+
+    const formData = new FormData();
+
+    formData.append('question_image', ImageToUpload);
+
+    try {
+      await axios().patch(`/api/v1/quiz/question-image/${data._id}`, formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+      fetchQuizSectionQuestionData();
+      Toast.fire({
+        icon: 'success',
+        title: deleteImage ? 'Image deleted' : 'Image Updated',
+      });
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -510,6 +546,63 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                   })
                 }
               />
+
+              {data ? (
+                <>
+                  <label htmlFor="question_image" className="form-label mt-2">
+                    Question Image
+                  </label>
+                  <div className="d-flex gap-2">
+                    {data && localData.question_image && (
+                      <>
+                        <div className="d-flex">
+                          <button
+                            className="btn btn-info rounded-0"
+                            onClick={() =>
+                              window.open(localData.question_image, '_blank')
+                            }
+                          >
+                            <div className="d-flex align-items-center">
+                              Image
+                              <i
+                                className="fa fa-file-image-o ms-1"
+                                aria-hidden="true"
+                              />
+                            </div>
+                          </button>
+                          <button
+                            className="btn btn-danger rounded-0"
+                            onClick={() => handleImageUpload(true)}
+                          >
+                            <i className="fa fa-trash" aria-hidden="true" />
+                          </button>
+                        </div>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      readOnly
+                      id="question_image"
+                      accept="image/*"
+                      className="form-control"
+                      onChange={(e) => setImageData(e.target.files[0])}
+                    />
+                    <button
+                      className="btn btn-success ms-auto"
+                      onClick={() => handleImageUpload(false)}
+                    >
+                      <i className="fa fa-cloud-upload" aria-hidden="true" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bg-info-subtle rounded-2 p-2 mt-2">
+                    Upload Question Image after saving Question
+                  </div>
+                </>
+              )}
+
               <label
                 htmlFor="question_answer_explanation"
                 className="form-label mt-2"

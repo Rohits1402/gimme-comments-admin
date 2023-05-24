@@ -292,9 +292,11 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
   const { setIsLoading } = useStore();
   const initialLocalData = {
     category_name: '',
+    category_image: '',
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
+  const [imageData, setImageData] = useState(null);
 
   useEffect(() => {
     if (!data) return;
@@ -305,12 +307,12 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
   const handleAddCategory = async () => {
     try {
       setIsLoading(true);
-      await axios().post(`/api/v1/courses/category`, localData);
+      const res = await axios().post(`/api/v1/courses/category`, localData);
       Toast.fire({
         icon: 'success',
         title: 'Course Category added',
       });
-      fetchCourseCategoriesData();
+      handleImageUpload(res.data.categories._id);
       setLocalData(initialLocalData);
       CloseButton.current.click();
       setIsLoading(false);
@@ -324,6 +326,25 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
     }
   };
 
+  // image upload
+  const handleImageUpload = async (idOfDoc, deleteImage) => {
+    let ImageToUpload = imageData;
+    if (deleteImage) {
+      ImageToUpload = null;
+    } else {
+      if (!ImageToUpload) return;
+    }
+
+    const formData = new FormData();
+
+    formData.append('category_image', ImageToUpload);
+
+    await axios().patch(`/api/v1/courses/category-image/${idOfDoc}`, formData, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    fetchCourseCategoriesData();
+  };
+
   const handleUpdateCategory = async () => {
     try {
       setIsLoading(true);
@@ -332,6 +353,7 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
         icon: 'success',
         title: 'Course Category updated',
       });
+      handleImageUpload(data._id);
       fetchCourseCategoriesData();
       CloseButton.current.click();
       setIsLoading(false);
@@ -437,6 +459,46 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
                   })
                 }
               />
+
+              <label htmlFor="category_image" className="form-label mt-2">
+                Category Image
+              </label>
+              <div className="d-flex gap-2">
+                {data && localData.category_image && (
+                  <>
+                    <div className="d-flex">
+                      <button
+                        className="btn btn-info rounded-0"
+                        onClick={() =>
+                          window.open(localData.category_image, '_blank')
+                        }
+                      >
+                        <div className="d-flex align-items-center">
+                          Image
+                          <i
+                            className="fa fa-file-image-o ms-1"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      </button>
+                      <button
+                        className="btn btn-danger rounded-0"
+                        onClick={() => handleImageUpload(data._id, true)}
+                      >
+                        <i className="fa fa-trash" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </>
+                )}
+                <input
+                  type="file"
+                  readOnly
+                  id="question_image"
+                  accept="image/*"
+                  className="form-control"
+                  onChange={(e) => setImageData(e.target.files[0])}
+                />
+              </div>
             </div>
             <div className="modal-footer">
               {data ? (

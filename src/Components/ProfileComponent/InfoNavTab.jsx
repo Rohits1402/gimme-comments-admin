@@ -62,14 +62,14 @@ const InfoNavTab = ({
     let imageData = new FormData();
 
     if (action === 'delete') {
-      imageData.append('profile-image', null);
+      imageData.append('profile_image', null);
     } else {
       if (!localImg) {
         Toast.fire({ icon: 'warning', title: 'Please provide Image' });
         return;
       }
 
-      imageData.append('profile-image', localImg);
+      imageData.append('profile_image', localImg);
     }
 
     setIsLoading(true);
