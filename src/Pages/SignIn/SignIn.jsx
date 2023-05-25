@@ -22,6 +22,7 @@ export default function SignIn() {
   const [userData, setUserData] = useState({
     email: '',
     phone_no: '',
+    country_code: '',
     password: '',
   });
   const [emailLogin, setEmailLogin] = useState(true);
@@ -50,6 +51,7 @@ export default function SignIn() {
       params.email = userData.email;
     } else {
       params.phone_no = Number(userData.phone_no);
+      params.country_code = Number(userData.country_code);
     }
 
     setIsLoading(true);
@@ -151,17 +153,36 @@ export default function SignIn() {
                   <label htmlFor="phoneNoField" className="form-label">
                     Phone No
                   </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="phoneNoField"
-                      placeholder="91XXXXXXXXXX"
-                      value={userData.phone_no}
-                      onChange={(e) =>
-                        setUserData({ ...userData, phone_no: e.target.value })
-                      }
-                    />
+                  <div className="d-flex">
+                    <div class="input-group mb-3">
+                      <span class="input-group-text" id="basic-addon1">
+                        +
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="countryCodeField"
+                        style={{ maxWidth: '50px' }}
+                        placeholder="XX"
+                        value={userData.country_code}
+                        onChange={(e) =>
+                          setUserData({
+                            ...userData,
+                            country_code: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="phoneNoField"
+                        placeholder="XXXXXXXXXX"
+                        value={userData.phone_no}
+                        onChange={(e) =>
+                          setUserData({ ...userData, phone_no: e.target.value })
+                        }
+                      />
+                    </div>
                   </div>
                 </>
               )}
