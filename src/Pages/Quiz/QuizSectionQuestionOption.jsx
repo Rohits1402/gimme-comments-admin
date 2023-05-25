@@ -44,7 +44,10 @@ const QuizSectionQuestionOption = ({ question_type, questionId }) => {
   useEffect(() => {
     fetchOptionsData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionId]);
+  }, [questionId, question_type]);
+
+  if (question_type === 'bool' || question_type === 'essay') return <></>;
+
   return (
     <>
       <label className="form-label mt-2">Add Options-</label>

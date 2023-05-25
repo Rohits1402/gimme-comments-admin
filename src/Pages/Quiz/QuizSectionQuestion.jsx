@@ -361,7 +361,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
     question_type: 'scq',
     question_duration: 1,
     question_marks: 1,
-    question_is_correct: true,
+    question_is_correct: false,
   };
 
   const [imageData, setImageData] = useState(null);
@@ -384,7 +384,10 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
         title: 'Section Question added',
       });
       fetchQuizSectionQuestionData(res.data.question._id);
-      setLocalData(initialLocalData);
+      setLocalData({
+        ...initialLocalData,
+        question_type: localData.question_type,
+      });
       CloseButton.current.click();
       setIsLoading(false);
     } catch (error) {
@@ -405,7 +408,18 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
         icon: 'success',
         title: 'Section Question updated',
       });
-      fetchQuizSectionQuestionData();
+
+      // delete options if question_type == 'bool' or 'essay'
+      if (
+        localData.question_type === 'bool' ||
+        localData.question_type === 'essay'
+      ) {
+        await axios().delete(`/api/v1/quiz/options/${data._id}`);
+      }
+
+      setTimeout(function () {
+        fetchQuizSectionQuestionData();
+      }, 500);
       CloseButton.current.click();
       setIsLoading(false);
     } catch (error) {
@@ -631,7 +645,10 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                     id="question_type"
                     value={localData.question_type}
                     onChange={(e) => {
-                      setLocalData(e.target.value);
+                      setLocalData({
+                        ...localData,
+                        question_type: e.target.value,
+                      });
                     }}
                   >
                     <option value="scq">Single Choice</option>
@@ -678,6 +695,37 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                   />
                 </div>
               </div>
+
+              {localData.question_type === 'bool' && (
+                <>
+                  <label
+                    htmlFor="question_is_correct"
+                    className="form-label mt-2"
+                  >
+                    Question is correct?
+                  </label>
+                  <select
+                    className="form-select w-100"
+                    id="question_is_correct"
+                    value={localData.question_is_correct}
+                    style={{
+                      background: localData.question_is_correct
+                        ? '#23d483'
+                        : '#ff959e',
+                    }}
+                    onChange={(e) => {
+                      setLocalData({
+                        ...localData,
+                        question_is_correct:
+                          e.target.value === 'true' ? true : false,
+                      });
+                    }}
+                  >
+                    <option value={true}>True</option>
+                    <option value={false}>False</option>
+                  </select>
+                </>
+              )}
 
               {data && (
                 <QuizSectionQuestionOption
