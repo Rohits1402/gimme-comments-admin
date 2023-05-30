@@ -8,6 +8,7 @@ import Footer from '../Layout//Footer';
 
 import SignIn from '../Pages/SignIn/SignIn';
 import Dashboard from '../Pages/Dashboard/Dashboard';
+import WelcomeScreen from '../Pages/WelcomeScreen/WelcomeScreen';
 import Profile from '../Pages/Profile/Profile';
 import Customers from '../Pages/Customers/Customers';
 import CustomerProfile from '../Pages/Customers/CustomerProfile';
@@ -63,6 +64,7 @@ export default function Routing() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/welcome-screen" element={<WelcomeScreen />} />
           <Route path="/profile" element={<Profile />} />
 
           {/* Customers */}

@@ -47,6 +47,12 @@ export default function Menu() {
                   <p>Dashboard</p>
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/welcome-screen" className={`nav-link `}>
+                  <i className="nav-icon fa fa-mobile" />
+                  <p>Welcome Screen</p>
+                </Link>
+              </li>
               {/* <li className="nav-item">
                 <Link to="/about-us" className={`nav-link `}>
                   <i className="nav-icon fa fa-info-circle"></i>

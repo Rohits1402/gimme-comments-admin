@@ -229,7 +229,6 @@ const Course = () => {
                       <th scope="col">
                         <select
                           className="form-select"
-                          defaultValue=""
                           value={courseCategoryFilter}
                           onChange={(e) => {
                             setCourseCategoryFilter(e.target.value);

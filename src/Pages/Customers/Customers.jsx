@@ -259,7 +259,10 @@ const Customers = () => {
                 </button>
               </div>
               <div className="card-body" style={{ overflow: 'auto' }}>
-                <table class="table table-hover" style={{ minWidth: '840px' }}>
+                <table
+                  className="table table-hover"
+                  style={{ minWidth: '840px' }}
+                >
                   <thead className="table-light">
                     <tr>
                       <th scope="col">#</th>
@@ -332,9 +335,7 @@ const Customers = () => {
                             setStatusFilter(e.target.value);
                           }}
                         >
-                          <option value="" selected>
-                            Status
-                          </option>
+                          <option value="">Status</option>
                           <option value="true">Active</option>
                           <option value="false">Blocked</option>
                         </select>
