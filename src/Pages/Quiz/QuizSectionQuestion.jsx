@@ -20,7 +20,7 @@ const Toast = Swal.mixin({
 
 const QuizSectionQuestion = () => {
   const navigate = useNavigate();
-  const { courseId, quizId, sectionId } = useParams();
+  const { courseId, courseSeriesId, quizId, sectionId } = useParams();
   const { setIsLoading } = useStore();
 
   const [quizSectionQuestionData, setQuizSectionQuestionData] = useState([]);
@@ -38,10 +38,12 @@ const QuizSectionQuestion = () => {
 
   // getting quiz section questions data from database
   const fetchQuizSectionQuestionData = async (modalToOpenId) => {
-    if (!courseId || !quizId || !sectionId) return;
+    if (!courseSeriesId || !quizId || !sectionId) return;
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/quiz/question/${sectionId}`);
+      const response = await axios().get(
+        `/api/v1/quizzes/question/${sectionId}`
+      );
 
       setQuizSectionQuestionData(response.data.questions);
       console.log(response.data.questions);
@@ -68,7 +70,7 @@ const QuizSectionQuestion = () => {
   useEffect(() => {
     fetchQuizSectionQuestionData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId]);
+  }, [courseSeriesId]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
@@ -174,7 +176,7 @@ const QuizSectionQuestion = () => {
               <div className="col-sm-6">
                 <h1 className="m-0">
                   <i className="nav-icon fa fa-graduation-cap me-2" />
-                  Section Question
+                  Questions
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -183,15 +185,22 @@ const QuizSectionQuestion = () => {
                     <Link to="/">Dashboard</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/courses">Course</Link>
+                    <Link to="/courses">Courses</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to={`/quiz/${courseId}`}>Quiz</Link>
+                    <Link to={`/courses/${courseId}`}>Series</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to={`/quiz/${courseId}/${quizId}`}>Quiz Section</Link>
+                    <Link to={`/quiz/${courseId}/${courseSeriesId}`}>
+                      Quizzes
+                    </Link>
                   </li>
-                  <li className="breadcrumb-item active">Section Question</li>
+                  <li className="breadcrumb-item">
+                    <Link to={`/quiz/${courseId}/${courseSeriesId}/${quizId}`}>
+                      Sections
+                    </Link>
+                  </li>
+                  <li className="breadcrumb-item active">Questions</li>
                 </ol>
               </div>
             </div>
@@ -376,7 +385,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
   const handleAddQuizSectionQuestion = async () => {
     try {
       setIsLoading(true);
-      const res = await axios().post(`/api/v1/quiz/question/${sectionId}`, {
+      const res = await axios().post(`/api/v1/quizzes/question/${sectionId}`, {
         ...localData,
       });
       Toast.fire({
@@ -403,7 +412,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
   const handleUpdateQuizSectionQuestion = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/quiz/question/${data._id}`, localData);
+      await axios().patch(`/api/v1/quizzes/question/${data._id}`, localData);
       Toast.fire({
         icon: 'success',
         title: 'Section Question updated',
@@ -414,7 +423,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
         localData.question_type === 'bool' ||
         localData.question_type === 'essay'
       ) {
-        await axios().delete(`/api/v1/quiz/options/${data._id}`);
+        await axios().delete(`/api/v1/quizzes/options/${data._id}`);
       }
 
       setTimeout(function () {
@@ -448,9 +457,13 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
     formData.append('question_image', ImageToUpload);
 
     try {
-      await axios().patch(`/api/v1/quiz/question-image/${data._id}`, formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      });
+      await axios().patch(
+        `/api/v1/quizzes/question-image/${data._id}`,
+        formData,
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        }
+      );
       fetchQuizSectionQuestionData();
       Toast.fire({
         icon: 'success',
@@ -479,7 +492,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/quiz/question/${data._id}`);
+          await axios().delete(`/api/v1/quizzes/question/${data._id}`);
           Toast.fire({
             icon: 'success',
             title: 'Section Question deleted',
@@ -665,7 +678,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                     Duration (in min)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     id="question_duration"
                     value={localData.question_duration}

@@ -38,6 +38,15 @@ export default function Header() {
           <li className="nav-item">
             <div
               className="nav-link"
+              role="button"
+              onClick={() => window.location.reload()}
+            >
+              <i className="fa fa-refresh" style={{ color: '#775DA8' }} />
+            </div>
+          </li>
+          <li className="nav-item">
+            <div
+              className="nav-link"
               data-widget="fullscreen"
               href="#"
               role="button"

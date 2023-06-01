@@ -144,7 +144,7 @@ const CourseSeriesPlan = () => {
               <div className="col-sm-6">
                 <h1 className="m-0">
                   <i className="nav-icon fa fa-inr me-2" />
-                  Series Plan
+                  Plans
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -153,12 +153,12 @@ const CourseSeriesPlan = () => {
                     <Link to="/">Dashboard</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/courses">Course</Link>
+                    <Link to="/courses">Courses</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to={`/courses/${courseId}`}>Course Series</Link>
+                    <Link to={`/courses/${courseId}`}>Series</Link>
                   </li>
-                  <li className="breadcrumb-item active">Series Plan</li>
+                  <li className="breadcrumb-item active">Plans</li>
                 </ol>
               </div>
             </div>
@@ -477,7 +477,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesPlanData }) => {
                 Plan Duration (in months)
               </label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="plan_duration"
                 value={localData.plan_duration}
@@ -492,7 +492,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesPlanData }) => {
                 Plan Original Price (in ₹)
               </label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="plan_original_price"
                 value={localData.plan_original_price}
@@ -510,7 +510,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesPlanData }) => {
                 Plan Discounted Price (in ₹)
               </label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="plan_discounted_price"
                 value={localData.plan_discounted_price}

@@ -42,7 +42,7 @@ const CourseSeries = () => {
       const response = await axios().get(`/api/v1/courses/series/${courseId}`);
 
       setCourseSeriesData(response.data.series);
-      console.log(response);
+      console.log(response.data.series);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -140,7 +140,7 @@ const CourseSeries = () => {
               <div className="col-sm-6">
                 <h1 className="m-0">
                   <i className="nav-icon fa fa-line-chart me-2" />
-                  Course Series
+                  Series
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -149,9 +149,9 @@ const CourseSeries = () => {
                     <Link to="/">Dashboard</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/courses">Course</Link>
+                    <Link to="/courses">Courses</Link>
                   </li>
-                  <li className="breadcrumb-item active">Course Series</li>
+                  <li className="breadcrumb-item active">Series</li>
                 </ol>
               </div>
             </div>
@@ -208,6 +208,7 @@ const CourseSeries = () => {
 
                       {/* <th scope="col">Duration</th> */}
                       <th scope="col">Plans</th>
+                      <th scope="col">Quizzes</th>
                       <th scope="col">Manage</th>
                     </tr>
                   </thead>
@@ -294,6 +295,19 @@ const TableContent = ({
                     aria-hidden="true"
                   />{' '}
                   {data.course_series_plans.length}
+                </button>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/quiz/${courseId}/${data._id}`)}
+                  className="btn btn-info py-0 d-flex align-items-center"
+                >
+                  <i
+                    className="fa fa-pencil-square-o me-1"
+                    aria-hidden="true"
+                  />{' '}
+                  {data.course_series_quizzes.length}
                 </button>
               </td>
               <td>
@@ -468,7 +482,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
                 Series Duration (in minutes)
               </label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="series_duration"
                 value={localData.series_duration}

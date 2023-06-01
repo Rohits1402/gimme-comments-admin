@@ -12,7 +12,7 @@ const CustomerProfile = () => {
               <div className="col-sm-6">
                 <h1 className="m-0">
                   <i className="nav-icon fas fa-users me-2" />
-                  Customer Profile
+                  Profile
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -23,7 +23,7 @@ const CustomerProfile = () => {
                   <li className="breadcrumb-item">
                     <Link to="/customers">Customers</Link>
                   </li>
-                  <li className="breadcrumb-item active">Customer Profile</li>
+                  <li className="breadcrumb-item active">Profile</li>
                 </ol>
               </div>
             </div>

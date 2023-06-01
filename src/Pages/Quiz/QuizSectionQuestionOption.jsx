@@ -26,7 +26,9 @@ const QuizSectionQuestionOption = ({ question_type, questionId }) => {
 
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/quiz/option/${questionId}`);
+      const response = await axios().get(
+        `/api/v1/quizzes/option/${questionId}`
+      );
 
       setOptionsData(response.data.options);
       console.log(response.data.options);
@@ -92,7 +94,7 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
   const handleAddOption = async () => {
     try {
       setIsLoading(true);
-      const res = await axios().post(`/api/v1/quiz/option/${questionId}`, {
+      const res = await axios().post(`/api/v1/quizzes/option/${questionId}`, {
         ...localData,
       });
       handleImageUpload(res.data.option._id);
@@ -116,7 +118,7 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
   const handleUpdateOption = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/quiz/option/${data._id}`, localData);
+      await axios().patch(`/api/v1/quizzes/option/${data._id}`, localData);
       handleImageUpload(data._id);
       Toast.fire({
         icon: 'success',
@@ -147,7 +149,7 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/quiz/option/${data._id}`);
+          await axios().delete(`/api/v1/quizzes/option/${data._id}`);
           Toast.fire({
             icon: 'success',
             title: 'Option deleted',
@@ -183,7 +185,7 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
 
     formData.append('option_image', ImageToUpload);
 
-    await axios().patch(`/api/v1/quiz/option-image/${idOfDoc}`, formData, {
+    await axios().patch(`/api/v1/quizzes/option-image/${idOfDoc}`, formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
     fetchOptionsData();

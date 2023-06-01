@@ -247,7 +247,7 @@ const Course = () => {
                       </th>
 
                       <th scope="col">Series</th>
-                      <th scope="col">Quizzes</th>
+                      {/* <th scope="col">Quizzes</th> */}
                       <th scope="col">Manage</th>
                     </tr>
                   </thead>
@@ -353,7 +353,7 @@ const TableContent = ({
                   {data.course_series.length}
                 </button>
               </td>
-              <td>
+              {/* <td>
                 <button
                   type="button"
                   onClick={() => navigate(`/quiz/${data._id}`)}
@@ -365,7 +365,7 @@ const TableContent = ({
                   />{' '}
                   {data.course_quizzes.length}
                 </button>
-              </td>
+              </td> */}
               <td>
                 <ManageCourseModal
                   data={data}
@@ -416,7 +416,10 @@ const ManageCourseModal = ({
 
     try {
       setIsLoading(true);
-      await axios().post(`/api/v1/courses/course`, localData);
+      await axios().post(
+        `/api/v1/courses/course/${localData.of_course_category}`,
+        localData
+      );
       Toast.fire({
         icon: 'success',
         title: 'Course added',

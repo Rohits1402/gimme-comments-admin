@@ -19,7 +19,7 @@ const Toast = Swal.mixin({
 
 const QuizSection = () => {
   const navigate = useNavigate();
-  const { courseId, quizId } = useParams();
+  const { courseId, courseSeriesId, quizId } = useParams();
   const { setIsLoading } = useStore();
 
   const [quizSectionData, setQuizSectionData] = useState([]);
@@ -36,10 +36,10 @@ const QuizSection = () => {
 
   // getting quiz section data from database
   const fetchQuizSectionData = async () => {
-    if (!courseId || !quizId) return;
+    if (!courseSeriesId || !quizId) return;
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/quiz/section/${quizId}`);
+      const response = await axios().get(`/api/v1/quizzes/section/${quizId}`);
 
       setQuizSectionData(response.data.sections);
       console.log(response.data.sections);
@@ -58,7 +58,7 @@ const QuizSection = () => {
   useEffect(() => {
     fetchQuizSectionData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId]);
+  }, [courseSeriesId]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
@@ -140,7 +140,7 @@ const QuizSection = () => {
               <div className="col-sm-6">
                 <h1 className="m-0">
                   <i className="nav-icon fa fa-list me-2" />
-                  Quiz Section
+                  Sections
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -149,12 +149,17 @@ const QuizSection = () => {
                     <Link to="/">Dashboard</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/courses">Course</Link>
+                    <Link to="/courses">Courses</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to={`/quiz/${courseId}`}>Quiz</Link>
+                    <Link to={`/courses/${courseId}`}>Series</Link>
                   </li>
-                  <li className="breadcrumb-item active">Quiz Section</li>
+                  <li className="breadcrumb-item">
+                    <Link to={`/quiz/${courseId}/${courseSeriesId}`}>
+                      Quizzes
+                    </Link>
+                  </li>
+                  <li className="breadcrumb-item active">Sections</li>
                 </ol>
               </div>
             </div>
@@ -267,7 +272,7 @@ const TableContent = ({
   usersPerPage,
 }) => {
   const navigate = useNavigate();
-  const { courseId, quizId } = useParams();
+  const { courseId, courseSeriesId, quizId } = useParams();
 
   return (
     <>
@@ -290,7 +295,9 @@ const TableContent = ({
                 <button
                   type="button"
                   onClick={() =>
-                    navigate(`/quiz/${courseId}/${quizId}/${data._id}`)
+                    navigate(
+                      `/quiz/${courseId}/${courseSeriesId}/${quizId}/${data._id}`
+                    )
                   }
                   className="btn btn-info py-0 d-flex align-items-center"
                 >
@@ -336,7 +343,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
   const handleAddQuizSection = async () => {
     try {
       setIsLoading(true);
-      await axios().post(`/api/v1/quiz/section/${quizId}`, {
+      await axios().post(`/api/v1/quizzes/section/${quizId}`, {
         ...localData,
       });
       Toast.fire({
@@ -360,7 +367,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
   const handleUpdateQuizSection = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/quiz/section/${data._id}`, localData);
+      await axios().patch(`/api/v1/quizzes/section/${data._id}`, localData);
       Toast.fire({
         icon: 'success',
         title: 'Quiz Section updated',
@@ -390,7 +397,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/quiz/section/${data._id}`);
+          await axios().delete(`/api/v1/quizzes/section/${data._id}`);
           Toast.fire({
             icon: 'success',
             title: 'Series Section deleted',
@@ -489,7 +496,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
                 Section Duration (in minutes)
               </label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="section_duration"
                 value={localData.section_duration}

@@ -19,7 +19,7 @@ const Toast = Swal.mixin({
 
 const Quiz = () => {
   const navigate = useNavigate();
-  const { courseId } = useParams();
+  const { courseId, courseSeriesId } = useParams();
   const { setIsLoading } = useStore();
 
   const [quizData, setQuizData] = useState([]);
@@ -36,10 +36,12 @@ const Quiz = () => {
 
   // getting quiz data from database
   const fetchQuizData = async (modalToOpenId) => {
-    if (!courseId) return;
+    if (!courseSeriesId) return;
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/quiz/${courseId}`);
+      const response = await axios().get(
+        `/api/v1/quizzes/quiz/${courseSeriesId}`
+      );
 
       setQuizData(response.data.quizzes);
       console.log(response.data.quizzes);
@@ -66,7 +68,7 @@ const Quiz = () => {
   useEffect(() => {
     fetchQuizData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId]);
+  }, [courseSeriesId]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
@@ -148,7 +150,7 @@ const Quiz = () => {
               <div className="col-sm-6">
                 <h1 className="m-0">
                   <i className="nav-icon fa fa-pie-chart me-2" />
-                  Quiz
+                  Quizzes
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -157,9 +159,12 @@ const Quiz = () => {
                     <Link to="/">Dashboard</Link>
                   </li>
                   <li className="breadcrumb-item">
-                    <Link to="/courses">Course</Link>
+                    <Link to="/courses">Courses</Link>
                   </li>
-                  <li className="breadcrumb-item active">Quiz</li>
+                  <li className="breadcrumb-item">
+                    <Link to={`/courses/${courseId}`}>Series</Link>
+                  </li>
+                  <li className="breadcrumb-item active">Quizzes</li>
                 </ol>
               </div>
             </div>
@@ -270,7 +275,7 @@ const TableContent = ({
   usersPerPage,
 }) => {
   const navigate = useNavigate();
-  const { courseId } = useParams();
+  const { courseId, courseSeriesId } = useParams();
 
   return (
     <>
@@ -288,17 +293,20 @@ const TableContent = ({
                 {currentPage * usersPerPage - usersPerPage + index + 1}
               </th>
               <td>{data.quiz_name}</td>
-              <td>
+              <td>{data.quiz_duration} min</td>
+              {/* <td>
                 {data.quiz_sections.reduce(
                   (tot, sec) => (tot += sec.section_duration),
                   0
                 )}{' '}
                 min
-              </td>
+              </td> */}
               <td>
                 <button
                   type="button"
-                  onClick={() => navigate(`/quiz/${courseId}/${data._id}`)}
+                  onClick={() =>
+                    navigate(`/quiz/${courseId}/${courseSeriesId}/${data._id}`)
+                  }
                   className="btn btn-info py-0 d-flex align-items-center"
                 >
                   <i
@@ -320,13 +328,14 @@ const TableContent = ({
 };
 
 const ManageCourseModal = ({ data, fetchQuizData }) => {
-  const { courseId } = useParams();
+  const { courseSeriesId } = useParams();
   const CloseButton = useRef();
   const { setIsLoading } = useStore();
   const initialLocalData = {
     quiz_name: '',
     quiz_description: '',
-    // quiz_duration: 0,
+    quiz_is_free: false,
+    quiz_duration: 0,
     break_between_sections: 0,
     show_questions_randomly: false,
   };
@@ -342,7 +351,7 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
   const handleAddQuiz = async () => {
     try {
       setIsLoading(true);
-      await axios().post(`/api/v1/quiz/${courseId}`, {
+      await axios().post(`/api/v1/quizzes/quiz/${courseSeriesId}`, {
         ...localData,
       });
       Toast.fire({
@@ -367,7 +376,7 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
   const handleUpdateQuiz = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/quiz/${data._id}`, localData);
+      await axios().patch(`/api/v1/quizzes/quiz/${data._id}`, localData);
       Toast.fire({
         icon: 'success',
         title: 'Quiz updated',
@@ -397,7 +406,7 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/quiz/${data._id}`);
+          await axios().delete(`/api/v1/quizzes/quiz/${data._id}`);
           Toast.fire({
             icon: 'success',
             title: 'Course Series deleted',
@@ -493,62 +502,100 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
                   })
                 }
               />
-              {/* <label htmlFor="quiz_duration" className="form-label mt-2">
-                Quiz Duration (in minutes)
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="quiz_duration"
-                value={localData.quiz_duration}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    quiz_duration: Number(e.target.value),
-                  })
-                }
-              /> */}
-              <label
-                htmlFor="break_between_sections"
-                className="form-label mt-2"
-              >
-                Break between sections (in minutes)
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="break_between_sections"
-                value={localData.break_between_sections}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    break_between_sections: Number(e.target.value),
-                  })
-                }
-              />
-
-              <label
-                htmlFor="show_questions_randomly"
-                className="form-label mt-2"
-              >
-                Show question randomly
-              </label>
-              <select
-                className="form-select w-100"
-                id="show_questions_randomly"
-                defaultValue=""
-                value={localData.show_questions_randomly}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    show_questions_randomly:
-                      e.target.value === 'false' ? false : true,
-                  })
-                }
-              >
-                <option value="false">False</option>
-                <option value="true">True</option>
-              </select>
+              <div className="row">
+                <div className="col-12 col-md-6">
+                  <label htmlFor="quiz_duration" className="form-label mt-2">
+                    Quiz Duration (in min)
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="quiz_duration"
+                    value={localData.quiz_duration}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        quiz_duration: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <div className="col-12 col-md-6">
+                  <label
+                    htmlFor="break_between_sections"
+                    className="form-label mt-2"
+                  >
+                    Break b/w sections (in min)
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="break_between_sections"
+                    value={localData.break_between_sections}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        break_between_sections: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-12 col-md-6">
+                  <label htmlFor="quiz_is_free" className="form-label mt-2">
+                    Is Paid / Free
+                  </label>
+                  <select
+                    className="form-select w-100"
+                    id="quiz_is_free"
+                    style={{
+                      background: localData.quiz_is_free
+                        ? '#23d483'
+                        : '#ff959e',
+                    }}
+                    value={localData.quiz_is_free}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        quiz_is_free: e.target.value === 'false' ? false : true,
+                      })
+                    }
+                  >
+                    <option value="false">Paid</option>
+                    <option value="true">Free</option>
+                  </select>
+                </div>
+                <div className="col-12 col-md-6">
+                  {' '}
+                  <label
+                    htmlFor="show_questions_randomly"
+                    className="form-label mt-2"
+                  >
+                    Show question randomly
+                  </label>
+                  <select
+                    className="form-select w-100"
+                    id="show_questions_randomly"
+                    style={{
+                      background: localData.show_questions_randomly
+                        ? '#23d483'
+                        : '#ff959e',
+                    }}
+                    value={localData.show_questions_randomly}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        show_questions_randomly:
+                          e.target.value === 'false' ? false : true,
+                      })
+                    }
+                  >
+                    <option value="false">False</option>
+                    <option value="true">True</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             <div className="modal-footer">

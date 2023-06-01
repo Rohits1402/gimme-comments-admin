@@ -312,9 +312,12 @@ const ManageCourseCategoryModal = ({ data, fetchCourseCategoriesData }) => {
         icon: 'success',
         title: 'Course Category added',
       });
-      handleImageUpload(res.data.categories._id);
+      handleImageUpload(res.data.category._id);
       setLocalData(initialLocalData);
       CloseButton.current.click();
+      setTimeout(function () {
+        fetchCourseCategoriesData();
+      }, 500);
       setIsLoading(false);
     } catch (error) {
       console.log(error);

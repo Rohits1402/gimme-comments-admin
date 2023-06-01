@@ -85,12 +85,15 @@ export default function Routing() {
           {/* will manage all course series plan in particular course series */}
 
           {/* Quiz */}
-          <Route path="/quiz/:courseId" element={<Quiz />} />
+          <Route path="/quiz/:courseId/:courseSeriesId" element={<Quiz />} />
           {/* will manage all quiz inside one course  */}
-          <Route path="/quiz/:courseId/:quizId" element={<QuizSection />} />
+          <Route
+            path="/quiz/:courseId/:courseSeriesId/:quizId"
+            element={<QuizSection />}
+          />
           {/* will manage all sections inside one quiz  */}
           <Route
-            path="/quiz/:courseId/:quizId/:sectionId"
+            path="/quiz/:courseId/:courseSeriesId/:quizId/:sectionId"
             element={<QuizSectionQuestion />}
           />
           {/* will manage all questions inside one quiz section */}

@@ -343,7 +343,7 @@ const Customers = () => {
                       <th scope="col">Info</th>
                     </tr>
                   </thead>
-                  <tbody class="table-group-divider">
+                  <tbody className="table-group-divider">
                     {paginatedData.length === 0 ? (
                       <tr>
                         <td colSpan="8" className="text-center">
