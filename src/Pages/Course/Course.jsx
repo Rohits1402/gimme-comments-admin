@@ -664,7 +664,6 @@ const ManageCourseModal = ({
               <select
                 className="form-select w-100"
                 id="course-category"
-                defaultValue=""
                 value={localData.of_course_category}
                 onChange={(e) =>
                   setLocalData({
