@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../Contexts/StoreContext';
 
 export default function Menu() {
-  const { setAccessToken } = useStore();
+  const { setAccessToken, accessLevel } = useStore();
   const navigate = useNavigate();
+  console.log(accessLevel);
 
   const logOut = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('access_level');
     setAccessToken(null);
     navigate('/sign-in');
   };
@@ -45,12 +47,6 @@ export default function Menu() {
                 <Link to="/" className={`nav-link `}>
                   <i className="nav-icon fas fa-th" />
                   <p>Dashboard</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/welcome-screen" className={`nav-link `}>
-                  <i className="nav-icon fa fa-mobile" />
-                  <p>Welcome Screen</p>
                 </Link>
               </li>
               {/* <li className="nav-item">
@@ -142,28 +138,77 @@ export default function Menu() {
                   </li>
                 </ul>
               </li> */}
-              <li className="nav-item active">
-                <Link to="/course-categories" className={`nav-link `}>
-                  <i className="nav-icon fa fa-files-o" />
-                  <p>Course Categories</p>
-                </Link>
-              </li>
+              {accessLevel === 'teacher' ? (
+                <>
+                  {/* Show to teachers only */}
+                  <li className="nav-item active">
+                    <Link to="/course-categories" className={`nav-link `}>
+                      <i className="nav-icon fa fa-files-o" />
+                      <p>Course Categories</p>
+                    </Link>
+                  </li>
 
-              <li className="nav-item active">
-                <Link to="/courses" className={`nav-link `}>
-                  <i className="nav-icon fa fa-book" />
-                  <p>Courses</p>
-                </Link>
-              </li>
+                  <li className="nav-item active">
+                    <Link to="/courses" className={`nav-link `}>
+                      <i className="nav-icon fa fa-book" />
+                      <p>Courses</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item active">
+                    <Link to="/customers" className={`nav-link `}>
+                      <i className="nav-icon fas fa-users" />
+                      <p>Customers</p>
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item active">
+                    <Link to="/customers" className={`nav-link `}>
+                      <i className="nav-icon fas fa-users" />
+                      <p>Customers</p>
+                    </Link>
+                  </li>
+                  {/* Show to Admin only */}
+                  <li
+                    className="nav-header rounded-2 text-bold my-2 "
+                    style={{ background: '#6c4da9' }}
+                  >
+                    APP
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/banner" className={`nav-link `}>
+                      <i className="nav-icon fa fa-television" />
+                      <p>Banner</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/welcome-screen" className={`nav-link `}>
+                      <i className="nav-icon fa fa-mobile" />
+                      <p>Welcome Screen</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/event" className={`nav-link `}>
+                      <i className="nav-icon fa fa-map-o" />
+                      <p>Event</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/feedback" className={`nav-link `}>
+                      <i className="nav-icon fa fa-bug" />
+                      <p>Feedback</p>
+                    </Link>
+                  </li>
+                </>
+              )}
 
-              <li className="nav-item active">
-                <Link to="/customers" className={`nav-link `}>
-                  <i className="nav-icon fas fa-users" />
-                  <p>Customers</p>
-                </Link>
+              <li
+                className="nav-header rounded-2 text-bold my-2 "
+                style={{ background: '#6c4da9' }}
+              >
+                SETTINGS
               </li>
-
-              <li className="nav-header">SETTINGS</li>
               <li className="nav-item">
                 <Link to="/profile" className="nav-link">
                   <i className="nav-icon fas fa-user" />
@@ -171,7 +216,7 @@ export default function Menu() {
                 </Link>
               </li>
               <li className="nav-item">
-                <a href="#fake" className="nav-link" onClick={logOut}>
+                <a href="#" className="nav-link" onClick={logOut}>
                   <i className="nav-icon fas fa-sign-out-alt" />
                   <p>Log Out</p>
                 </a>

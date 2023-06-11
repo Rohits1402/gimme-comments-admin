@@ -9,6 +9,7 @@ export default function Header() {
 
   const logOut = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('access_level');
     setAccessToken(null);
     navigate('/sign-in');
   };

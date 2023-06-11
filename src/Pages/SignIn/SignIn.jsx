@@ -65,9 +65,19 @@ export default function SignIn() {
         icon: 'success',
         title: 'Logged In',
       });
-      localStorage.setItem('access_token', res.data.token);
       setIsLoading(false);
-      navigate('/');
+
+      if (!(res.data.role === 'admin' || res.data.role === 'teacher')) {
+        Toast.fire({
+          icon: 'error',
+          title: 'Invalid Credentials',
+        });
+        return;
+      }
+
+      localStorage.setItem('access_token', res.data.token);
+      localStorage.setItem('access_level', res.data.role);
+      window.location.reload();
     } catch (err) {
       console.log(err);
       Toast.fire({

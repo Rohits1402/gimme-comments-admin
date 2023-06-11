@@ -34,7 +34,7 @@ const WelcomeScreen = () => {
   const fetchWelcomeScreensData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/welcome-screen/screen`);
+      const response = await axios().get(`/api/v1/app/welcome-screen`);
       setWelcomeScreenData(response.data.welcomeScreens);
       console.log(response.data.welcomeScreens);
       setIsLoading(false);
@@ -289,10 +289,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
   const handleAddScreen = async () => {
     try {
       setIsLoading(true);
-      const res = await axios().post(
-        `/api/v1/welcome-screen/screen`,
-        localData
-      );
+      const res = await axios().post(`/api/v1/app/welcome-screen`, localData);
       Toast.fire({
         icon: 'success',
         title: 'Welcome Screen added',
@@ -325,7 +322,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
     formData.append('screen_image', ImageToUpload);
 
     await axios().patch(
-      `/api/v1/welcome-screen/screen-image/${idOfDoc}`,
+      `/api/v1/app/welcome-screen-image/${idOfDoc}`,
       formData,
       {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -337,10 +334,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
   const handleUpdateWelcomeScreen = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(
-        `/api/v1/welcome-screen/screen/${data._id}`,
-        localData
-      );
+      await axios().patch(`/api/v1/app/welcome-screen/${data._id}`, localData);
       Toast.fire({
         icon: 'success',
         title: 'Welcome Screen updated',
@@ -371,7 +365,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/welcome-screen/screen/${data._id}`);
+          await axios().delete(`/api/v1/app/welcome-screen/${data._id}`);
           Toast.fire({
             icon: 'success',
             title: 'Welcome Screen deleted',

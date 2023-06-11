@@ -8,7 +8,10 @@ import Footer from '../Layout//Footer';
 
 import SignIn from '../Pages/SignIn/SignIn';
 import Dashboard from '../Pages/Dashboard/Dashboard';
-import WelcomeScreen from '../Pages/WelcomeScreen/WelcomeScreen';
+import AppBanner from '../Pages/App/Banner';
+import AppEvent from '../Pages/App/Event';
+import AppFeedback from '../Pages/App/Feedback';
+import AppWelcomeScreen from '../Pages/App/WelcomeScreen';
 import Profile from '../Pages/Profile/Profile';
 import Customers from '../Pages/Customers/Customers';
 import CustomerProfile from '../Pages/Customers/CustomerProfile';
@@ -32,7 +35,7 @@ export default function Routing() {
         style={{
           display: isLoading ? 'grid' : 'none',
           position: 'fixed',
-          zIndex: 100,
+          zIndex: 1060,
           height: '100vh',
           width: '100vw',
           placeItems: 'center',
@@ -64,7 +67,13 @@ export default function Routing() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/welcome-screen" element={<WelcomeScreen />} />
+
+          <Route path="/app">
+            <Route path="banner" element={<AppBanner />} />
+            <Route path="event" element={<AppEvent />} />
+            <Route path="feedback" element={<AppFeedback />} />
+            <Route path="welcome-screen" element={<AppWelcomeScreen />} />
+          </Route>
           <Route path="/profile" element={<Profile />} />
 
           {/* Customers */}

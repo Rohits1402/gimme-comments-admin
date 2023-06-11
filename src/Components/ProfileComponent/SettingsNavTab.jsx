@@ -235,14 +235,14 @@ const SettingsNavTab = ({
             <div className="card-header">
               <h3 className="card-title">
                 Account Role:{' '}
-                {userData.role === 'admin' ? (
-                  <>
-                    <span className="badge badge-primary">Admin</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="badge badge-primary">User</span>
-                  </>
+                {userData.role === 'admin' && (
+                  <span className="badge badge-danger">Admin</span>
+                )}
+                {userData.role === 'teacher' && (
+                  <span className="badge badge-warning">Teacher</span>
+                )}
+                {userData.role === 'user' && (
+                  <span className="badge badge-primary">User</span>
                 )}
               </h3>
             </div>
@@ -261,6 +261,7 @@ const SettingsNavTab = ({
                     }}
                   >
                     <option value="admin">Admin</option>
+                    <option value="teacher">Teacher</option>
                     <option value="user">User</option>
                   </select>
                 </div>

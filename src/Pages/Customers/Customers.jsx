@@ -86,6 +86,9 @@ const Customers = () => {
         case 'user':
           if (user.role === 'user') return true;
           else return false;
+        case 'teacher':
+          if (user.role === 'teacher') return true;
+          else return false;
         case 'admin':
           if (user.role === 'admin') return true;
           else return false;
@@ -324,6 +327,7 @@ const Customers = () => {
                         >
                           <option value="">Role</option>
                           <option value="user">User</option>
+                          <option value="teacher">Teacher</option>
                           <option value="admin">Admin</option>
                         </select>
                       </th>
@@ -383,16 +387,20 @@ const Customers = () => {
                             <td>+{data.phone_no}</td>
                             <td className="text-center">{data.gender}</td>
                             <td className="text-center">
-                              {data.role === 'admin' ? (
-                                <>
-                                  <span className="badge badge-info">
-                                    Admin
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="badge badge-info">User</span>
-                                </>
+                              {data.role === 'admin' && (
+                                <span className="badge badge-danger">
+                                  Admin
+                                </span>
+                              )}
+                              {data.role === 'teacher' && (
+                                <span className="badge badge-warning">
+                                  Teacher
+                                </span>
+                              )}
+                              {data.role === 'user' && (
+                                <span className="badge badge-primary">
+                                  User
+                                </span>
                               )}
                             </td>
                             <td className="text-center">
