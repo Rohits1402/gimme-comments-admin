@@ -12,6 +12,7 @@ import AppBanner from '../Pages/App/Banner';
 import AppEvent from '../Pages/App/Event';
 import AppFeedback from '../Pages/App/Feedback';
 import AppWelcomeScreen from '../Pages/App/WelcomeScreen';
+import AppNotification from '../Pages/App/Notification';
 import Profile from '../Pages/Profile/Profile';
 import Customers from '../Pages/Customers/Customers';
 import CustomerProfile from '../Pages/Customers/CustomerProfile';
@@ -73,6 +74,7 @@ export default function Routing() {
             <Route path="event" element={<AppEvent />} />
             <Route path="feedback" element={<AppFeedback />} />
             <Route path="welcome-screen" element={<AppWelcomeScreen />} />
+            <Route path="notification" element={<AppNotification />} />
           </Route>
           <Route path="/profile" element={<Profile />} />
 

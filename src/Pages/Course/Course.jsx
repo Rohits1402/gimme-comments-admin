@@ -560,7 +560,7 @@ const ManageCourseModal = ({
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                {data ? <>Manage Course {data._id}</> : <>Add Course</>}
+                {data ? <>Manage Course</> : <>Add Course</>}
               </h5>
               <button
                 type="button"

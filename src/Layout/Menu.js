@@ -177,21 +177,27 @@ export default function Menu() {
                     APP
                   </li>
                   <li className="nav-item">
-                    <Link to="/app/banner" className={`nav-link `}>
-                      <i className="nav-icon fa fa-television" />
-                      <p>Banner</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
                     <Link to="/app/welcome-screen" className={`nav-link `}>
                       <i className="nav-icon fa fa-mobile" />
                       <p>Welcome Screen</p>
                     </Link>
                   </li>
                   <li className="nav-item">
+                    <Link to="/app/banner" className={`nav-link `}>
+                      <i className="nav-icon fa fa-television" />
+                      <p>Banner</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <Link to="/app/event" className={`nav-link `}>
                       <i className="nav-icon fa fa-map-o" />
                       <p>Event</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/notification" className={`nav-link `}>
+                      <i className="nav-icon fa fa-bell" />
+                      <p>Notification</p>
                     </Link>
                   </li>
                   <li className="nav-item">

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -17,32 +16,27 @@ const Toast = Swal.mixin({
   },
 });
 
-const CourseSeries = () => {
-  const navigate = useNavigate();
-  const { courseId } = useParams();
+const Notification = () => {
   const { setIsLoading } = useStore();
-
-  const [courseSeriesData, setCourseSeriesData] = useState([]);
+  const [notificationData, setNotificationData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
 
   const [searchTermFilter, setSearchTermFilter] = useState('');
-  const [sortingOn, setSortingOn] = useState('series_name');
+  const [sortingOn, setSortingOn] = useState('notification_title');
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
 
-  // getting course series data from database
-  const fetchCourseSeriesData = async () => {
-    if (!courseId) return;
+  // getting notification data from database
+  const fetchNotificationtData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/courses/series/${courseId}`);
-
-      setCourseSeriesData(response.data.series);
-      console.log(response.data.series);
+      const response = await axios().get(`/api/v1/app/notification`);
+      setNotificationData(response.data.notifications);
+      console.log(response.data.notifications);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -51,38 +45,38 @@ const CourseSeries = () => {
         title: error.response.data ? error.response.data.msg : error.message,
       });
       setIsLoading(false);
-      navigate('/courses');
     }
   };
 
   useEffect(() => {
-    fetchCourseSeriesData();
+    fetchNotificationtData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId]);
+  }, [setIsLoading]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
-    const tempCourseSeriesData = courseSeriesData;
-
     // filtering according to search term filter
-    const tempSearchTermFilterData = tempCourseSeriesData.filter((course) => {
-      if (searchTermFilter === '') {
-        return true;
-      } else {
-        if (
-          course['series_name']
-            .toLowerCase()
-            .includes(searchTermFilter.toLowerCase())
-        ) {
+    const tempCourseCategoriesData = notificationData;
+    const tempSearchTermFilterData = tempCourseCategoriesData.filter(
+      (category) => {
+        if (searchTermFilter === '') {
           return true;
         } else {
-          return false;
+          if (
+            category['notification_title']
+              .toLowerCase()
+              .includes(searchTermFilter.toLowerCase())
+          ) {
+            return true;
+          } else {
+            return false;
+          }
         }
       }
-    });
+    );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [courseSeriesData, searchTermFilter]);
+  }, [notificationData, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -139,8 +133,8 @@ const CourseSeries = () => {
             <div className="row mb-2">
               <div className="col-sm-6">
                 <h1 className="m-0">
-                  <i className="nav-icon fa fa-line-chart me-2" />
-                  Series
+                  <i className="nav-icon fa fa-bell me-2" />
+                  Notification
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -148,10 +142,8 @@ const CourseSeries = () => {
                   <li className="breadcrumb-item">
                     <Link to="/">Dashboard</Link>
                   </li>
-                  <li className="breadcrumb-item">
-                    <Link to="/courses">Courses</Link>
-                  </li>
-                  <li className="breadcrumb-item active">Series</li>
+                  {/* <li className="breadcrumb-item">App</li> */}
+                  <li className="breadcrumb-item active">Notification</li>
                 </ol>
               </div>
             </div>
@@ -161,15 +153,15 @@ const CourseSeries = () => {
                 <input
                   type="text"
                   className="form-control flex-grow-1"
-                  placeholder="Search for course series"
+                  placeholder="Search for banner title"
                   autoFocus={true}
                   value={searchTermFilter}
                   onChange={(e) => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
-                <ManageCourseModal
-                  fetchCourseSeriesData={fetchCourseSeriesData}
+                <ManageNotificationModal
+                  fetchNotificationtData={fetchNotificationtData}
                 />
               </div>
               <div className="card-body" style={{ overflow: 'auto' }}>
@@ -186,35 +178,18 @@ const CourseSeries = () => {
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('series_name');
+                          setSortingOn('notification_title');
                         }}
                       >
-                        Name
+                        Title
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
-                      <th
-                        scope="col"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          setSortingMethod(!sortingMethod);
-                          setSortingOn('series_duration');
-                        }}
-                      >
-                        <div className="d-flex">
-                          Duration
-                          <i className="ms-2 fa fa-sort" aria-hidden="true" />
-                        </div>
-                      </th>
-
-                      {/* <th scope="col">Duration</th> */}
-                      <th scope="col">Plans</th>
-                      <th scope="col">Quizzes</th>
                       <th scope="col">Manage</th>
                     </tr>
                   </thead>
                   <tbody className="table-group-divider">
                     <TableContent
-                      fetchCourseSeriesData={fetchCourseSeriesData}
+                      fetchNotificationtData={fetchNotificationtData}
                       paginatedData={paginatedData}
                       currentPage={currentPage}
                       usersPerPage={usersPerPage}
@@ -236,7 +211,7 @@ const CourseSeries = () => {
                   className="form-control"
                   style={{ width: '100px', textAlign: 'center' }}
                   value={`${currentPage}/${
-                    Math.ceil(courseSeriesData.length / usersPerPage) || 1
+                    Math.ceil(notificationData.length / usersPerPage) || 1
                   }`}
                   readOnly={true}
                 />
@@ -256,17 +231,14 @@ const CourseSeries = () => {
   );
 };
 
-export default CourseSeries;
+export default Notification;
 
 const TableContent = ({
-  fetchCourseSeriesData,
+  fetchNotificationtData,
   paginatedData,
   currentPage,
   usersPerPage,
 }) => {
-  const navigate = useNavigate();
-  const { courseId } = useParams();
-
   return (
     <>
       {paginatedData.length === 0 ? (
@@ -282,38 +254,11 @@ const TableContent = ({
               <th scope="row">
                 {currentPage * usersPerPage - usersPerPage + index + 1}
               </th>
-              <td>{data.series_name}</td>
-              <td>{data.series_duration} min</td>
+              <td>{data.notification_title}</td>
               <td>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/courses/${courseId}/${data._id}`)}
-                  className="btn btn-info py-0 d-flex align-items-center"
-                >
-                  <i
-                    className="fa fa-pencil-square-o me-1"
-                    aria-hidden="true"
-                  />{' '}
-                  {data.course_series_plans.length}
-                </button>
-              </td>
-              <td>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/quiz/${courseId}/${data._id}`)}
-                  className="btn btn-info py-0 d-flex align-items-center"
-                >
-                  <i
-                    className="fa fa-pencil-square-o me-1"
-                    aria-hidden="true"
-                  />{' '}
-                  {data.course_series_quizzes.length}
-                </button>
-              </td>
-              <td>
-                <ManageCourseModal
+                <ManageNotificationModal
                   data={data}
-                  fetchCourseSeriesData={fetchCourseSeriesData}
+                  fetchNotificationtData={fetchNotificationtData}
                 />
               </td>
             </tr>
@@ -324,16 +269,19 @@ const TableContent = ({
   );
 };
 
-const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
-  const { courseId } = useParams();
+const ManageNotificationModal = ({ data, fetchNotificationtData }) => {
   const CloseButton = useRef();
   const { setIsLoading } = useStore();
   const initialLocalData = {
-    series_name: '',
-    series_duration: 0,
+    notification_type: 'info',
+    notification_title: '',
+    notification_delivery_time: new Date().toJSON(),
+    notification_url: '',
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
+  //   const [imageData, setImageData] = useState(null);
+  console.log(localData);
 
   useEffect(() => {
     if (!data) return;
@@ -341,17 +289,14 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
     setLocalData(data);
   }, [data]);
 
-  const handleAddCourseSeries = async () => {
+  const handleAddNotification = async () => {
     try {
       setIsLoading(true);
-      await axios().post(`/api/v1/courses/series/${courseId}`, {
-        ...localData,
-      });
+      await axios().post(`/api/v1/app/notification`, localData);
       Toast.fire({
         icon: 'success',
-        title: 'Course Series added',
+        title: 'Notification added',
       });
-      fetchCourseSeriesData();
       setLocalData(initialLocalData);
       CloseButton.current.click();
       setIsLoading(false);
@@ -365,15 +310,15 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
     }
   };
 
-  const handleUpdateCourseSeries = async () => {
+  const handleUpdateNotification = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/courses/series/${data._id}`, localData);
+      await axios().patch(`/api/v1/app/notification/${data._id}`, localData);
       Toast.fire({
         icon: 'success',
-        title: 'Course Series updated',
+        title: 'Notification updated',
       });
-      fetchCourseSeriesData();
+      fetchNotificationtData();
       CloseButton.current.click();
       setIsLoading(false);
     } catch (error) {
@@ -386,11 +331,11 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
     }
   };
 
-  const handleDeleteCourseSeries = async () => {
+  const handleDeleteNotification = async () => {
     Swal.fire({
       icon: 'warning',
       title: 'Are you sure?',
-      html: '<h6>All Plans related to this course series will also get permanently deleted</h6>',
+      html: '<h6>This notification will get permanently deleted</h6>',
       showCancelButton: true,
       confirmButtonText: `Delete`,
       confirmButtonColor: '#D14343',
@@ -398,13 +343,13 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/courses/series/${data._id}`);
+          await axios().delete(`/api/v1/app/notification/${data._id}`);
           Toast.fire({
             icon: 'success',
-            title: 'Course Series deleted',
+            title: 'Notification deleted',
           });
           setTimeout(function () {
-            fetchCourseSeriesData();
+            fetchNotificationtData();
           }, 500);
           CloseButton.current.click();
           setIsLoading(false);
@@ -428,19 +373,19 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
         type="button"
         className="btn btn-dark ms-2 d-flex align-items-center"
         data-toggle="modal"
-        data-target={data ? `#${data._id}` : '#add-course-series-modal'}
+        data-target={data ? `#${data._id}` : '#add-notification-modal'}
       >
         {data ? (
           <i className="fa fa-cog" aria-hidden="true" />
         ) : (
           <>
-            <i className="fa fa-plus me-1" aria-hidden="true" /> Series
+            <i className="fa fa-plus me-1" aria-hidden="true" /> Notification
           </>
         )}
       </button>
       <div
         className="modal fade"
-        id={data ? data._id : 'add-course-series-modal'}
+        id={data ? data._id : 'add-notification-modal'}
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"
@@ -450,7 +395,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                {data ? <>Manage Series </> : <>Add Series</>}
+                {data ? <>Manage Notification</> : <>Add Notification</>}
               </h5>
               <button
                 type="button"
@@ -463,34 +408,59 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
               </button>
             </div>
             <div className="modal-body">
-              <label htmlFor="series_name" className="form-label mt-2">
-                Series Name
+              <label htmlFor="notification_title" className="form-label mt-2">
+                Notification Title
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="series_name"
-                value={localData.series_name}
+                id="notification_title"
+                value={localData.notification_title}
                 onChange={(e) =>
                   setLocalData({
                     ...localData,
-                    series_name: e.target.value,
+                    notification_title: e.target.value,
                   })
                 }
               />
-              <label htmlFor="series_duration" className="form-label mt-2">
-                Series Duration (in minutes)
+
+              <label htmlFor="notification_type" className="form-label mt-2">
+                Notification Type
               </label>
-              <input
-                type="number"
-                className="form-control"
-                id="series_duration"
-                value={localData.series_duration}
-                onChange={(e) =>
+              <select
+                className="form-select w-100"
+                id="notification_type"
+                value={localData.notification_type}
+                onChange={(e) => {
                   setLocalData({
                     ...localData,
-                    series_duration: Number(e.target.value),
-                  })
+                    notification_type: e.target.value,
+                  });
+                }}
+              >
+                <option value="info">Information</option>
+                <option value="promo">Promotion</option>
+                <option value="update">Update</option>
+              </select>
+              <label
+                htmlFor="notification_delivery_time"
+                className="form-label mt-2"
+              >
+                Event Date/Time
+              </label>
+              <input
+                type="time"
+                className="form-control"
+                id="notification_delivery_time"
+                value={localData.notification_delivery_time}
+                onChange={
+                  (e) => console.log(e.target.value)
+                  //   setLocalData({
+                  //     ...localData,
+                  //     notification_delivery_time: new Date(
+                  //       e.target.value.valueAsNumber
+                  //     ),
+                  //   })
                 }
               />
             </div>
@@ -501,7 +471,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
                   <button
                     type="button"
                     className="btn btn-danger me-auto"
-                    onClick={handleDeleteCourseSeries}
+                    onClick={handleDeleteNotification}
                   >
                     Delete
                   </button>
@@ -515,7 +485,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleUpdateCourseSeries}
+                    onClick={handleUpdateNotification}
                   >
                     Save changes
                   </button>
@@ -533,7 +503,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleAddCourseSeries}
+                    onClick={handleAddNotification}
                   >
                     Add
                   </button>

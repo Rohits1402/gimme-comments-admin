@@ -16,27 +16,27 @@ const Toast = Swal.mixin({
   },
 });
 
-const WelcomeScreen = () => {
+const Banner = () => {
   const { setIsLoading } = useStore();
-  const [welcomeScreenData, setWelcomeScreenData] = useState([]);
+  const [bannerData, setBannerData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
 
   const [searchTermFilter, setSearchTermFilter] = useState('');
-  const [sortingOn, setSortingOn] = useState('screen_title');
+  const [sortingOn, setSortingOn] = useState('banner_title');
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [usersPerPage, setUsersPerPage] = useState(20);
   const usersPerPage = 20;
 
-  // getting welcome screen data from database
-  const fetchWelcomeScreensData = async () => {
+  // getting banner data from database
+  const fetchBannerData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/app/welcome-screen`);
-      setWelcomeScreenData(response.data.welcomeScreens);
-      console.log(response.data.welcomeScreens);
+      const response = await axios().get(`/api/v1/app/banner`);
+      setBannerData(response.data.banners);
+      console.log(response.data.banners);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -49,21 +49,21 @@ const WelcomeScreen = () => {
   };
 
   useEffect(() => {
-    fetchWelcomeScreensData();
+    fetchBannerData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsLoading]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
     // filtering according to search term filter
-    const tempCourseCategoriesData = welcomeScreenData;
+    const tempCourseCategoriesData = bannerData;
     const tempSearchTermFilterData = tempCourseCategoriesData.filter(
       (category) => {
         if (searchTermFilter === '') {
           return true;
         } else {
           if (
-            category['screen_title']
+            category['banner_title']
               .toLowerCase()
               .includes(searchTermFilter.toLowerCase())
           ) {
@@ -76,7 +76,7 @@ const WelcomeScreen = () => {
     );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [welcomeScreenData, searchTermFilter]);
+  }, [bannerData, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -133,8 +133,8 @@ const WelcomeScreen = () => {
             <div className="row mb-2">
               <div className="col-sm-6">
                 <h1 className="m-0">
-                  <i className="nav-icon fa fa-mobile me-2" />
-                  Welcome Screens
+                  <i className="nav-icon fa fa-television me-2" />
+                  Banner
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -142,7 +142,8 @@ const WelcomeScreen = () => {
                   <li className="breadcrumb-item">
                     <Link to="/">Dashboard</Link>
                   </li>
-                  <li className="breadcrumb-item active">Welcome Screens</li>
+                  {/* <li className="breadcrumb-item">App</li> */}
+                  <li className="breadcrumb-item active">Banner</li>
                 </ol>
               </div>
             </div>
@@ -152,16 +153,14 @@ const WelcomeScreen = () => {
                 <input
                   type="text"
                   className="form-control flex-grow-1"
-                  placeholder="Search for welcome screen"
+                  placeholder="Search for banner title"
                   autoFocus={true}
                   value={searchTermFilter}
                   onChange={(e) => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
-                <ManageWelcomeScreenModal
-                  fetchWelcomeScreensData={fetchWelcomeScreensData}
-                />
+                <ManageBannerModal fetchBannerData={fetchBannerData} />
               </div>
               <div className="card-body" style={{ overflow: 'auto' }}>
                 <table
@@ -177,7 +176,7 @@ const WelcomeScreen = () => {
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('screen_title');
+                          setSortingOn('banner_title');
                         }}
                       >
                         Title
@@ -188,7 +187,7 @@ const WelcomeScreen = () => {
                   </thead>
                   <tbody className="table-group-divider">
                     <TableContent
-                      fetchWelcomeScreensData={fetchWelcomeScreensData}
+                      fetchBannerData={fetchBannerData}
                       paginatedData={paginatedData}
                       currentPage={currentPage}
                       usersPerPage={usersPerPage}
@@ -210,7 +209,7 @@ const WelcomeScreen = () => {
                   className="form-control"
                   style={{ width: '100px', textAlign: 'center' }}
                   value={`${currentPage}/${
-                    Math.ceil(welcomeScreenData.length / usersPerPage) || 1
+                    Math.ceil(bannerData.length / usersPerPage) || 1
                   }`}
                   readOnly={true}
                 />
@@ -230,10 +229,10 @@ const WelcomeScreen = () => {
   );
 };
 
-export default WelcomeScreen;
+export default Banner;
 
 const TableContent = ({
-  fetchWelcomeScreensData,
+  fetchBannerData,
   paginatedData,
   currentPage,
   usersPerPage,
@@ -253,11 +252,11 @@ const TableContent = ({
               <th scope="row">
                 {currentPage * usersPerPage - usersPerPage + index + 1}
               </th>
-              <td>{data.screen_title}</td>
+              <td>{data.banner_title}</td>
               <td>
-                <ManageWelcomeScreenModal
+                <ManageBannerModal
                   data={data}
-                  fetchWelcomeScreensData={fetchWelcomeScreensData}
+                  fetchBannerData={fetchBannerData}
                 />
               </td>
             </tr>
@@ -268,7 +267,7 @@ const TableContent = ({
   );
 };
 
-const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
+const ManageBannerModal = ({ data, fetchBannerData }) => {
   const CloseButton = useRef();
   const { setIsLoading } = useStore();
   const initialLocalData = {
@@ -286,15 +285,15 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
     setLocalData(data);
   }, [data]);
 
-  const handleAddScreen = async () => {
+  const handleAddBanner = async () => {
     try {
       setIsLoading(true);
-      const res = await axios().post(`/api/v1/app/welcome-screen`, localData);
+      const res = await axios().post(`/api/v1/app/banner`, localData);
       Toast.fire({
         icon: 'success',
-        title: 'Welcome Screen added',
+        title: 'Banner added',
       });
-      handleImageUpload(res.data.welcomeScreen._id);
+      handleImageUpload(res.data.banner._id);
       setLocalData(initialLocalData);
       CloseButton.current.click();
       setIsLoading(false);
@@ -319,28 +318,24 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
 
     const formData = new FormData();
 
-    formData.append('screen_image', ImageToUpload);
+    formData.append('banner_image', ImageToUpload);
 
-    await axios().patch(
-      `/api/v1/app/welcome-screen-image/${idOfDoc}`,
-      formData,
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      }
-    );
-    fetchWelcomeScreensData();
+    await axios().patch(`/api/v1/app/banner-image/${idOfDoc}`, formData, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    fetchBannerData();
   };
 
-  const handleUpdateWelcomeScreen = async () => {
+  const handleUpdateBanner = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/app/welcome-screen/${data._id}`, localData);
+      await axios().patch(`/api/v1/app/banner/${data._id}`, localData);
       Toast.fire({
         icon: 'success',
-        title: 'Welcome Screen updated',
+        title: 'Banner updated',
       });
       handleImageUpload(data._id);
-      fetchWelcomeScreensData();
+      fetchBannerData();
       CloseButton.current.click();
       setIsLoading(false);
     } catch (error) {
@@ -353,11 +348,11 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
     }
   };
 
-  const handleDeleteWelcomeScreen = async () => {
+  const handleDeleteBanner = async () => {
     Swal.fire({
       icon: 'warning',
       title: 'Are you sure?',
-      html: '<h6>This welcome screen will get permanently deleted</h6>',
+      html: '<h6>This banner will get permanently deleted</h6>',
       showCancelButton: true,
       confirmButtonText: `Delete`,
       confirmButtonColor: '#D14343',
@@ -365,13 +360,13 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/app/welcome-screen/${data._id}`);
+          await axios().delete(`/api/v1/app/banner/${data._id}`);
           Toast.fire({
             icon: 'success',
-            title: 'Welcome Screen deleted',
+            title: 'Banner deleted',
           });
           setTimeout(function () {
-            fetchWelcomeScreensData();
+            fetchBannerData();
           }, 500);
           CloseButton.current.click();
           setIsLoading(false);
@@ -395,19 +390,19 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
         type="button"
         className="btn btn-dark ms-2 d-flex align-items-center"
         data-toggle="modal"
-        data-target={data ? `#${data._id}` : '#add-welcome-screen-modal'}
+        data-target={data ? `#${data._id}` : '#add-banner-modal'}
       >
         {data ? (
           <i className="fa fa-cog" aria-hidden="true" />
         ) : (
           <>
-            <i className="fa fa-plus me-1" aria-hidden="true" /> Screen
+            <i className="fa fa-plus me-1" aria-hidden="true" /> Banner
           </>
         )}
       </button>
       <div
         className="modal fade"
-        id={data ? data._id : 'add-welcome-screen-modal'}
+        id={data ? data._id : 'add-banner-modal'}
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"
@@ -417,7 +412,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                {data ? <>Manage Screen</> : <>Add Screen</>}
+                {data ? <>Manage Banner</> : <>Add Banner</>}
               </h5>
               <button
                 type="button"
@@ -430,49 +425,49 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
               </button>
             </div>
             <div className="modal-body">
-              <label htmlFor="screen_title" className="form-label mt-2">
-                Screen Title
+              <label htmlFor="banner_title" className="form-label mt-2">
+                Banner Title
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="screen_title"
-                value={localData.screen_title}
+                id="banner_title"
+                value={localData.banner_title}
                 onChange={(e) =>
                   setLocalData({
                     ...localData,
-                    screen_title: e.target.value,
+                    banner_title: e.target.value,
                   })
                 }
               />
 
-              <label htmlFor="screen_subtitle" className="form-label mt-2">
-                Screen Subtitle
+              <label htmlFor="banner_url" className="form-label mt-2">
+                Banner URL
               </label>
               <textarea
                 type="text"
                 className="form-control"
-                id="screen_subtitle"
-                value={localData.screen_subtitle}
+                id="banner_url"
+                value={localData.banner_url}
                 onChange={(e) =>
                   setLocalData({
                     ...localData,
-                    screen_subtitle: e.target.value,
+                    banner_url: e.target.value,
                   })
                 }
               />
 
-              <label htmlFor="screen_image" className="form-label mt-2">
-                Screen Image
+              <label htmlFor="banner_image" className="form-label mt-2">
+                Banner Image
               </label>
               <div className="d-flex gap-2">
-                {data && localData.screen_image && (
+                {data && localData.banner_image && (
                   <>
                     <div className="d-flex">
                       <button
                         className="btn btn-info rounded-0"
                         onClick={() =>
-                          window.open(localData.screen_image, '_blank')
+                          window.open(localData.banner_image, '_blank')
                         }
                       >
                         <div className="d-flex align-items-center">
@@ -495,7 +490,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
                 <input
                   type="file"
                   readOnly
-                  id="screen_image"
+                  id="banner_image"
                   accept="image/*"
                   className="form-control"
                   onChange={(e) => setImageData(e.target.files[0])}
@@ -509,7 +504,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
                   <button
                     type="button"
                     className="btn btn-danger me-auto"
-                    onClick={handleDeleteWelcomeScreen}
+                    onClick={handleDeleteBanner}
                   >
                     Delete
                   </button>
@@ -523,7 +518,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleUpdateWelcomeScreen}
+                    onClick={handleUpdateBanner}
                   >
                     Save changes
                   </button>
@@ -541,7 +536,7 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleAddScreen}
+                    onClick={handleAddBanner}
                   >
                     Add
                   </button>
