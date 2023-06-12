@@ -45,8 +45,8 @@ const Customers = () => {
       try {
         setIsLoading(true);
         const response = await axios().get(`/api/v1/auth/admin/profile/`);
-        setCustomersData(response.data);
-        console.log(response.data);
+        setCustomersData(response.data.users);
+        console.log(response.data.users);
         setIsLoading(false);
       } catch (error) {
         console.log(error);

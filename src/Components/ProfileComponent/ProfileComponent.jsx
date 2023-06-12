@@ -55,8 +55,8 @@ const ProfileComponent = () => {
         `/api/v1/auth/admin/profile/${currUserId}`
       );
 
-      setUserData(response.data);
-      console.log(response.data);
+      setUserData(response.data.user);
+      console.log(response.data.user);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
