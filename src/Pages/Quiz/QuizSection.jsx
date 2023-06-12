@@ -31,8 +31,8 @@ const QuizSection = () => {
   const [sortingOn, setSortingOn] = useState('section_name');
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [usersPerPage, setUsersPerPage] = useState(20);
-  const usersPerPage = 20;
+  // const [rowsPerPage, setRowsPerPage] = useState(20);
+  const rowsPerPage = 20;
 
   // getting quiz section data from database
   const fetchQuizSectionData = async () => {
@@ -115,19 +115,19 @@ const QuizSection = () => {
     setSortedData(tempFilteredData);
   }, [filteredData, sortingMethod, sortingOn]);
 
-  // paginating sortedData accordint to currentPage and usersPerPage
+  // paginating sortedData accordint to currentPage and rowsPerPage
   useEffect(() => {
-    const indexOfLastUser = currentPage * usersPerPage;
-    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const indexOfLastUser = currentPage * rowsPerPage;
+    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
     setPaginatedData(sortedData.slice(indexOfFirstUser, indexOfLastUser));
-  }, [currentPage, sortedData, usersPerPage, sortingMethod]);
+  }, [currentPage, sortedData, rowsPerPage, sortingMethod]);
 
   const prevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
   const nextPage = () => {
-    const totalPage = Math.ceil(sortedData.length / usersPerPage);
+    const totalPage = Math.ceil(sortedData.length / rowsPerPage);
     if (currentPage < totalPage) setCurrentPage(currentPage + 1);
   };
 
@@ -224,7 +224,7 @@ const QuizSection = () => {
                       fetchQuizSectionData={fetchQuizSectionData}
                       paginatedData={paginatedData}
                       currentPage={currentPage}
-                      usersPerPage={usersPerPage}
+                      rowsPerPage={rowsPerPage}
                     />
                   </tbody>
                 </table>
@@ -243,7 +243,7 @@ const QuizSection = () => {
                   className="form-control"
                   style={{ width: '100px', textAlign: 'center' }}
                   value={`${currentPage}/${
-                    Math.ceil(quizSectionData.length / usersPerPage) || 1
+                    Math.ceil(quizSectionData.length / rowsPerPage) || 1
                   }`}
                   readOnly={true}
                 />
@@ -269,7 +269,7 @@ const TableContent = ({
   fetchQuizSectionData,
   paginatedData,
   currentPage,
-  usersPerPage,
+  rowsPerPage,
 }) => {
   const navigate = useNavigate();
   const { courseId, courseSeriesId, quizId } = useParams();
@@ -287,7 +287,7 @@ const TableContent = ({
           return (
             <tr key={data._id}>
               <th scope="row">
-                {currentPage * usersPerPage - usersPerPage + index + 1}
+                {currentPage * rowsPerPage - rowsPerPage + index + 1}
               </th>
               <td>{data.section_name}</td>
               <td>{data.section_duration} min</td>
