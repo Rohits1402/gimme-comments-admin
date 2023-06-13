@@ -5,7 +5,6 @@ import { useStore } from '../Contexts/StoreContext';
 export default function Menu() {
   const { setAccessToken, accessLevel } = useStore();
   const navigate = useNavigate();
-  console.log(accessLevel);
 
   const logOut = () => {
     localStorage.removeItem('access_token');
