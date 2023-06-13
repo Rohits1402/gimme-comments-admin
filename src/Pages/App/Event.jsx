@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
+import { JsDateToString, FormDateToJs } from '../../Utils/dateEditor';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -35,8 +36,12 @@ const Event = () => {
     try {
       setIsLoading(true);
       const response = await axios().get(`/api/v1/app/event`);
-      setEventData(response.data.events);
-      console.log(response.data.events);
+      let events = response.data.events.map((d) => {
+        d.event_delivery_time = JsDateToString(d.event_delivery_time);
+        return d;
+      });
+      setEventData(events);
+      console.log(events);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -182,6 +187,20 @@ const Event = () => {
                         Title
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
+                      <th
+                        scope="col"
+                        className="w-100"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          setSortingMethod(!sortingMethod);
+                          setSortingOn('event_delivery_time');
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          Date/Time
+                          <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                        </div>
+                      </th>
                       <th scope="col">Manage</th>
                     </tr>
                   </thead>
@@ -253,6 +272,7 @@ const TableContent = ({
                 {currentPage * rowsPerPage - rowsPerPage + index + 1}
               </th>
               <td>{data.event_title}</td>
+              <td>{data.event_delivery_time}</td>
               <td>
                 <ManageEventModal data={data} fetchEventData={fetchEventData} />
               </td>
@@ -488,16 +508,17 @@ const ManageEventModal = ({ data, fetchEventData }) => {
               />
               <label htmlFor="event_delivery_time" className="form-label mt-2">
                 Event Date/Time
+                {JsDateToString(localData.event_delivery_time)})
               </label>
               <input
                 type="datetime-local"
                 className="form-control"
                 id="event_delivery_time"
-                value={localData.event_delivery_time}
+                // value={localData.event_delivery_time}
                 onChange={(e) =>
                   setLocalData({
                     ...localData,
-                    event_delivery_time: e.target.value,
+                    event_delivery_time: FormDateToJs(e.target.value),
                   })
                 }
               />

@@ -271,9 +271,9 @@ const ManageBannerModal = ({ data, fetchBannerData }) => {
   const CloseButton = useRef();
   const { setIsLoading } = useStore();
   const initialLocalData = {
-    screen_image: '',
-    screen_title: '',
-    screen_subtitle: '',
+    banner_title: '',
+    banner_image: '',
+    banner_url: '',
   };
 
   const [localData, setLocalData] = useState(initialLocalData);

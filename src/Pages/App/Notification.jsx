@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
+import { JsDateToString, FormDateToJs } from '../../Utils/dateEditor';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -24,6 +25,7 @@ const Notification = () => {
   const [paginatedData, setPaginatedData] = useState([]);
 
   const [searchTermFilter, setSearchTermFilter] = useState('');
+  const [notificationTypeFilter, setNotificationTypeFilter] = useState('');
   const [sortingOn, setSortingOn] = useState('notification_title');
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,9 +36,15 @@ const Notification = () => {
   const fetchNotificationtData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/app/notification`);
-      setNotificationData(response.data.notifications);
-      console.log(response.data.notifications);
+      let response = await axios().get(`/api/v1/app/notification`);
+      let notifications = response.data.notifications.map((d) => {
+        d.notification_delivery_time = JsDateToString(
+          d.notification_delivery_time
+        );
+        return d;
+      });
+      setNotificationData(notifications);
+      console.log(notifications);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -56,8 +64,28 @@ const Notification = () => {
   // FILTERING DATA IN ONE GO
   useEffect(() => {
     // filtering according to search term filter
-    const tempCourseCategoriesData = notificationData;
-    const tempSearchTermFilterData = tempCourseCategoriesData.filter(
+    const tempNotificationData = notificationData;
+
+    // filtering according to notification type
+    const tempNotificationTypeFilteredData = tempNotificationData.filter(
+      (data) => {
+        switch (notificationTypeFilter) {
+          case 'info':
+            if (data.notification_type === 'info') return true;
+            else return false;
+          case 'promo':
+            if (data.notification_type === 'promo') return true;
+            else return false;
+          case 'update':
+            if (data.notification_type === 'update') return true;
+            else return false;
+          default:
+            return true;
+        }
+      }
+    );
+
+    const tempSearchTermFilterData = tempNotificationTypeFilteredData.filter(
       (category) => {
         if (searchTermFilter === '') {
           return true;
@@ -76,7 +104,7 @@ const Notification = () => {
     );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [notificationData, searchTermFilter]);
+  }, [notificationData, notificationTypeFilter, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -153,7 +181,7 @@ const Notification = () => {
                 <input
                   type="text"
                   className="form-control flex-grow-1"
-                  placeholder="Search for banner title"
+                  placeholder="Search for notification title"
                   autoFocus={true}
                   value={searchTermFilter}
                   onChange={(e) => {
@@ -178,11 +206,25 @@ const Notification = () => {
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('notification_title');
+                          setSortingOn('notification_delivery_time');
                         }}
                       >
-                        Title
+                        Date / Time
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                      </th>
+                      <th scope="col">
+                        <select
+                          className="form-select"
+                          value={notificationTypeFilter}
+                          onChange={(e) => {
+                            setNotificationTypeFilter(e.target.value);
+                          }}
+                        >
+                          <option value="">Type</option>
+                          <option value="info">Information</option>
+                          <option value="promo">Promotion</option>
+                          <option value="update">Update</option>
+                        </select>
                       </th>
                       <th scope="col">Manage</th>
                     </tr>
@@ -254,7 +296,17 @@ const TableContent = ({
               <th scope="row">
                 {currentPage * rowsPerPage - rowsPerPage + index + 1}
               </th>
-              <td>{data.notification_title}</td>
+              <td>
+                <div style={{ fontSize: '70%', color: '#775da8' }}>
+                  {data.notification_delivery_time}
+                </div>
+                <div>{data.notification_title}</div>
+              </td>
+              <td>
+                {data.notification_type === 'info' && 'Information'}
+                {data.notification_type === 'promo' && 'Promotion'}
+                {data.notification_type === 'update' && 'Update'}
+              </td>
               <td>
                 <ManageNotificationModal
                   data={data}
@@ -275,13 +327,12 @@ const ManageNotificationModal = ({ data, fetchNotificationtData }) => {
   const initialLocalData = {
     notification_type: 'info',
     notification_title: '',
-    notification_delivery_time: new Date().toJSON(),
+    notification_delivery_time: new Date(),
     notification_url: '',
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
   //   const [imageData, setImageData] = useState(null);
-  console.log(localData);
 
   useEffect(() => {
     if (!data) return;
@@ -446,22 +497,20 @@ const ManageNotificationModal = ({ data, fetchNotificationtData }) => {
                 htmlFor="notification_delivery_time"
                 className="form-label mt-2"
               >
-                Event Date/Time
+                Notification Date/Time (
+                {JsDateToString(localData.notification_delivery_time)})
               </label>
               <input
-                type="time"
+                type="datetime-local"
                 className="form-control"
                 id="notification_delivery_time"
-                value={localData.notification_delivery_time}
-                onChange={
-                  (e) => console.log(e.target.value)
-                  //   setLocalData({
-                  //     ...localData,
-                  //     notification_delivery_time: new Date(
-                  //       e.target.value.valueAsNumber
-                  //     ),
-                  //   })
-                }
+                // value={localData.notification_delivery_time}
+                onChange={(e) => {
+                  setLocalData({
+                    ...localData,
+                    notification_delivery_time: FormDateToJs(e.target.value),
+                  });
+                }}
               />
             </div>
             <div className="modal-footer">

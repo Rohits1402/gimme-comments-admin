@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
+import { JsDateToString } from '../../Utils/dateEditor';
+import { useNavigate } from 'react-router-dom';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -16,27 +18,34 @@ const Toast = Swal.mixin({
   },
 });
 
-const WelcomeScreen = () => {
+const default_profile_image =
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
+
+const Feedback = () => {
   const { setIsLoading } = useStore();
-  const [welcomeScreenData, setWelcomeScreenData] = useState([]);
+  const [feedbackData, setFeedbackData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
 
   const [searchTermFilter, setSearchTermFilter] = useState('');
-  const [sortingOn, setSortingOn] = useState('screen_title');
-  const [sortingMethod, setSortingMethod] = useState(true);
+  const [sortingOn, setSortingOn] = useState('updatedAt');
+  const [sortingMethod, setSortingMethod] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   // const [rowsPerPage, setRowsPerPage] = useState(20);
   const rowsPerPage = 20;
 
   // getting welcome screen data from database
-  const fetchWelcomeScreensData = async () => {
+  const fetchFeedbackData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/app/welcome-screen`);
-      setWelcomeScreenData(response.data.welcomeScreens);
-      console.log(response.data.welcomeScreens);
+      const response = await axios().get(`/api/v1/app/feedback`);
+      let feedbacks = response.data.feedbacks.map((d) => {
+        d.updatedAt = JsDateToString(d.updatedAt);
+        return d;
+      });
+      setFeedbackData(feedbacks);
+      console.log(feedbacks);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -49,21 +58,24 @@ const WelcomeScreen = () => {
   };
 
   useEffect(() => {
-    fetchWelcomeScreensData();
+    fetchFeedbackData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsLoading]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
     // filtering according to search term filter
-    const tempCourseCategoriesData = welcomeScreenData;
+    const tempCourseCategoriesData = feedbackData;
     const tempSearchTermFilterData = tempCourseCategoriesData.filter(
       (category) => {
         if (searchTermFilter === '') {
           return true;
         } else {
           if (
-            category['screen_title']
+            category['feedback_description']
+              .toLowerCase()
+              .includes(searchTermFilter.toLowerCase()) ||
+            category.feedback_by.name
               .toLowerCase()
               .includes(searchTermFilter.toLowerCase())
           ) {
@@ -76,7 +88,7 @@ const WelcomeScreen = () => {
     );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [welcomeScreenData, searchTermFilter]);
+  }, [feedbackData, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -133,8 +145,8 @@ const WelcomeScreen = () => {
             <div className="row mb-2">
               <div className="col-sm-6">
                 <h1 className="m-0">
-                  <i className="nav-icon fa fa-mobile me-2" />
-                  Welcome Screens
+                  <i className="nav-icon fa fa-bug me-2" />
+                  Feedback
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -142,7 +154,7 @@ const WelcomeScreen = () => {
                   <li className="breadcrumb-item">
                     <Link to="/">Dashboard</Link>
                   </li>
-                  <li className="breadcrumb-item active">Welcome Screens</li>
+                  <li className="breadcrumb-item active">Feedback</li>
                 </ol>
               </div>
             </div>
@@ -152,16 +164,16 @@ const WelcomeScreen = () => {
                 <input
                   type="text"
                   className="form-control flex-grow-1"
-                  placeholder="Search for welcome screen"
+                  placeholder="Search for feedback, user name"
                   autoFocus={true}
                   value={searchTermFilter}
                   onChange={(e) => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
-                <ManageWelcomeScreenModal
-                  fetchWelcomeScreensData={fetchWelcomeScreensData}
-                />
+                {/* <ManageFeedbackModal
+                  fetchFeedbackData={fetchFeedbackData}
+                /> */}
               </div>
               <div className="card-body" style={{ overflow: 'auto' }}>
                 <table
@@ -177,18 +189,32 @@ const WelcomeScreen = () => {
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('screen_title');
+                          setSortingOn('updatedAt');
                         }}
                       >
-                        Title
+                        Date / Time
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
-                      <th scope="col">Manage</th>
+                      <th
+                        scope="col"
+                        className="w-100"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          setSortingMethod(!sortingMethod);
+                          setSortingOn('feedback_value');
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          Rating
+                          <i className="ms-2 fa fa-sort" aria-hidden="true" />
+                        </div>
+                      </th>
+                      <th scope="col">Info</th>
                     </tr>
                   </thead>
                   <tbody className="table-group-divider">
                     <TableContent
-                      fetchWelcomeScreensData={fetchWelcomeScreensData}
+                      fetchFeedbackData={fetchFeedbackData}
                       paginatedData={paginatedData}
                       currentPage={currentPage}
                       rowsPerPage={rowsPerPage}
@@ -210,7 +236,7 @@ const WelcomeScreen = () => {
                   className="form-control"
                   style={{ width: '100px', textAlign: 'center' }}
                   value={`${currentPage}/${
-                    Math.ceil(welcomeScreenData.length / rowsPerPage) || 1
+                    Math.ceil(feedbackData.length / rowsPerPage) || 1
                   }`}
                   readOnly={true}
                 />
@@ -230,10 +256,10 @@ const WelcomeScreen = () => {
   );
 };
 
-export default WelcomeScreen;
+export default Feedback;
 
 const TableContent = ({
-  fetchWelcomeScreensData,
+  fetchFeedbackData,
   paginatedData,
   currentPage,
   rowsPerPage,
@@ -253,11 +279,29 @@ const TableContent = ({
               <th scope="row">
                 {currentPage * rowsPerPage - rowsPerPage + index + 1}
               </th>
-              <td>{data.screen_title}</td>
               <td>
-                <ManageWelcomeScreenModal
+                <div style={{ fontSize: '70%', color: '#775da8' }}>
+                  {data.feedback_by.name} | {data.updatedAt}
+                </div>
+                <div>{data.feedback_description}</div>
+              </td>
+              <td>
+                <div className="text-center">
+                  {Array.apply(null, { length: data.feedback_value }).map(
+                    (e, i) => (
+                      <i
+                        key={i}
+                        className="fa fa-star text-yellow"
+                        aria-hidden="true"
+                      />
+                    )
+                  )}
+                </div>
+              </td>
+              <td>
+                <ManageFeedbackModal
                   data={data}
-                  fetchWelcomeScreensData={fetchWelcomeScreensData}
+                  fetchFeedbackData={fetchFeedbackData}
                 />
               </td>
             </tr>
@@ -268,17 +312,18 @@ const TableContent = ({
   );
 };
 
-const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
+const ManageFeedbackModal = ({ data, fetchFeedbackData }) => {
   const CloseButton = useRef();
+  const navigate = useNavigate();
+
   const { setIsLoading } = useStore();
   const initialLocalData = {
-    screen_image: '',
-    screen_title: '',
-    screen_subtitle: '',
+    feedback_description: '',
+    feedback_value: '',
+    feedback_by: {},
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
-  const [imageData, setImageData] = useState(null);
 
   useEffect(() => {
     if (!data) return;
@@ -286,78 +331,11 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
     setLocalData(data);
   }, [data]);
 
-  const handleAddScreen = async () => {
-    try {
-      setIsLoading(true);
-      const res = await axios().post(`/api/v1/app/welcome-screen`, localData);
-      Toast.fire({
-        icon: 'success',
-        title: 'Welcome Screen added',
-      });
-      handleImageUpload(res.data.welcomeScreen._id);
-      setLocalData(initialLocalData);
-      CloseButton.current.click();
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      Toast.fire({
-        icon: 'error',
-        title: error.response.data ? error.response.data.msg : error.message,
-      });
-      setIsLoading(false);
-    }
-  };
-
-  // image upload
-  const handleImageUpload = async (idOfDoc, deleteImage) => {
-    let ImageToUpload = imageData;
-    if (deleteImage) {
-      ImageToUpload = null;
-    } else {
-      if (!ImageToUpload) return;
-    }
-
-    const formData = new FormData();
-
-    formData.append('screen_image', ImageToUpload);
-
-    await axios().patch(
-      `/api/v1/app/welcome-screen-image/${idOfDoc}`,
-      formData,
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      }
-    );
-    fetchWelcomeScreensData();
-  };
-
-  const handleUpdateWelcomeScreen = async () => {
-    try {
-      setIsLoading(true);
-      await axios().patch(`/api/v1/app/welcome-screen/${data._id}`, localData);
-      Toast.fire({
-        icon: 'success',
-        title: 'Welcome Screen updated',
-      });
-      handleImageUpload(data._id);
-      fetchWelcomeScreensData();
-      CloseButton.current.click();
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      Toast.fire({
-        icon: 'error',
-        title: error.response.data ? error.response.data.msg : error.message,
-      });
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteWelcomeScreen = async () => {
+  const handleDeleteFeedback = async () => {
     Swal.fire({
       icon: 'warning',
       title: 'Are you sure?',
-      html: '<h6>This welcome screen will get permanently deleted</h6>',
+      html: '<h6>This feedback will get permanently deleted</h6>',
       showCancelButton: true,
       confirmButtonText: `Delete`,
       confirmButtonColor: '#D14343',
@@ -368,10 +346,10 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
           await axios().delete(`/api/v1/app/welcome-screen/${data._id}`);
           Toast.fire({
             icon: 'success',
-            title: 'Welcome Screen deleted',
+            title: 'Feedback deleted',
           });
           setTimeout(function () {
-            fetchWelcomeScreensData();
+            fetchFeedbackData();
           }, 500);
           CloseButton.current.click();
           setIsLoading(false);
@@ -393,21 +371,15 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
     <>
       <button
         type="button"
-        className="btn btn-dark ms-2 d-flex align-items-center"
+        className="btn btn-primary ms-2 d-flex align-items-center"
         data-toggle="modal"
-        data-target={data ? `#${data._id}` : '#add-welcome-screen-modal'}
+        data-target={`#${data._id}`}
       >
-        {data ? (
-          <i className="fa fa-cog" aria-hidden="true" />
-        ) : (
-          <>
-            <i className="fa fa-plus me-1" aria-hidden="true" /> Screen
-          </>
-        )}
+        <i className="fa fa-info-circle" aria-hidden="true" />
       </button>
       <div
         className="modal fade"
-        id={data ? data._id : 'add-welcome-screen-modal'}
+        id={data ? data._id : 'add-feedback-modal'}
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"
@@ -417,7 +389,16 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                {data ? <>Manage Screen</> : <>Add Screen</>}
+                Feedback{' '}
+                {Array.apply(null, { length: data.feedback_value }).map(
+                  (e, i) => (
+                    <i
+                      key={i}
+                      className="fa fa-star text-yellow"
+                      aria-hidden="true"
+                    />
+                  )
+                )}
               </h5>
               <button
                 type="button"
@@ -430,123 +411,56 @@ const ManageWelcomeScreenModal = ({ data, fetchWelcomeScreensData }) => {
               </button>
             </div>
             <div className="modal-body">
-              <label htmlFor="screen_title" className="form-label mt-2">
-                Screen Title
+              <label htmlFor="feedback_by" className="form-label mt-2">
+                Feedback By
               </label>
-              <input
-                type="text"
-                className="form-control"
-                id="screen_title"
-                value={localData.screen_title}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    screen_title: e.target.value,
-                  })
-                }
-              />
-
-              <label htmlFor="screen_subtitle" className="form-label mt-2">
-                Screen Subtitle
+              <div
+                className="d-flex bg-light-subtle p-2 my-2 rounded-2"
+                // style={{ cursor: 'pointer' }}
+                // onClick={() => navigate(`/customers/${data.feedback_by._id}`)}
+              >
+                <img
+                  src={data.feedback_by.profile_image || default_profile_image}
+                  alt="profile"
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    marginRight: '10px',
+                  }}
+                />
+                <div>
+                  <div className="text-bold">{data.feedback_by.name}</div>
+                  <div>{data.feedback_by.email}</div>
+                </div>
+              </div>
+              <label htmlFor="feedback_description" className="form-label mt-2">
+                Feedback Title
               </label>
               <textarea
                 type="text"
                 className="form-control"
-                id="screen_subtitle"
-                value={localData.screen_subtitle}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    screen_subtitle: e.target.value,
-                  })
-                }
+                id="feedback_description"
+                value={localData.feedback_description}
+                disabled={true}
               />
-
-              <label htmlFor="screen_image" className="form-label mt-2">
-                Screen Image
-              </label>
-              <div className="d-flex gap-2">
-                {data && localData.screen_image && (
-                  <>
-                    <div className="d-flex">
-                      <button
-                        className="btn btn-info rounded-0"
-                        onClick={() =>
-                          window.open(localData.screen_image, '_blank')
-                        }
-                      >
-                        <div className="d-flex align-items-center">
-                          Image
-                          <i
-                            className="fa fa-file-image-o ms-1"
-                            aria-hidden="true"
-                          />
-                        </div>
-                      </button>
-                      <button
-                        className="btn btn-danger rounded-0"
-                        onClick={() => handleImageUpload(data._id, true)}
-                      >
-                        <i className="fa fa-trash" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </>
-                )}
-                <input
-                  type="file"
-                  readOnly
-                  id="screen_image"
-                  accept="image/*"
-                  className="form-control"
-                  onChange={(e) => setImageData(e.target.files[0])}
-                />
-              </div>
             </div>
             <div className="modal-footer">
-              {data ? (
-                <>
-                  {/* Manage */}
-                  <button
-                    type="button"
-                    className="btn btn-danger me-auto"
-                    onClick={handleDeleteWelcomeScreen}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-success"
-                    onClick={handleUpdateWelcomeScreen}
-                  >
-                    Save changes
-                  </button>
-                </>
-              ) : (
-                <>
-                  {/* Add New */}
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    data-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-success"
-                    onClick={handleAddScreen}
-                  >
-                    Add
-                  </button>
-                </>
-              )}
+              <button
+                type="button"
+                className="btn btn-danger me-auto"
+                onClick={handleDeleteFeedback}
+              >
+                Delete
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
