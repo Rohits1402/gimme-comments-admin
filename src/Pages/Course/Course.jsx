@@ -463,14 +463,14 @@ const ManageCourseModal = ({
     let imageData = new FormData();
 
     if (action === 'delete') {
-      imageData.append('course-image', null);
+      imageData.append('course_image', null);
     } else {
       if (!localImg) {
         Toast.fire({ icon: 'warning', title: 'Please provide Image' });
         return;
       }
 
-      imageData.append('course-image', localImg);
+      imageData.append('course_image', localImg);
     }
 
     setIsLoading(true);

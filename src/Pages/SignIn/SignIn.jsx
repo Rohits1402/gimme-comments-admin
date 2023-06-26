@@ -238,6 +238,40 @@ export default function SignIn() {
             >
               Sign in
             </button>
+            <button
+              type="submit"
+              className="btn btn-light w-100 my-2"
+              onClick={async () => {
+                window.open(
+                  process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google',
+                  '_blank'
+                );
+                // await axios().get(
+                //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google'
+                // );
+                // window.location.href =
+                //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google';
+              }}
+            >
+              Google Login
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
+              onClick={async () => {
+                window.open(
+                  process.env.REACT_APP_BASE_URL +
+                    '/api/v1/auth/login/facebook',
+                  '_blank'
+                );
+
+                // await axios().get(
+                //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/facebook'
+                // );
+              }}
+            >
+              Facebook Login
+            </button>
           </form>
         </div>
       </div>

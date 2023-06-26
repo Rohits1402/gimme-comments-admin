@@ -205,6 +205,42 @@ export default function Menu() {
                       <p>Feedback</p>
                     </Link>
                   </li>
+                  <li className="nav-item">
+                    <Link to="/app/about-us" className={`nav-link `}>
+                      <i className="nav-icon fa fa-info-circle" />
+                      <p>About Us</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/contact-us" className={`nav-link `}>
+                      <i className="nav-icon fa fa-phone" />
+                      <p>Contact Us</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/faq" className={`nav-link `}>
+                      <i className="nav-icon fa fa-question-circle" />
+                      <p>FAQ</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/help" className={`nav-link `}>
+                      <i className="nav-icon fa fa-life-ring" />
+                      <p>Help</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/privacy-policy" className={`nav-link `}>
+                      <i className="nav-icon fa fa-lock" />
+                      <p>Privacy Policy</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/app/terms-and-condition" className={`nav-link `}>
+                      <i className="nav-icon fa fa-gavel" />
+                      <p>Terms and Condition</p>
+                    </Link>
+                  </li>
                 </>
               )}
 
