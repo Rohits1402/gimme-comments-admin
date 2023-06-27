@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
+import { JsDateToString } from '../../Utils/dateEditor';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -116,7 +117,14 @@ const TermsAndCondition = () => {
                   }
                 />
               </div>
-              <div className="card-footer clearfix d-flex justify-content-center"></div>
+              <div className="card-footer clearfix d-flex justify-content-end text-dark">
+                {termsAndConditionData.updatedAt && (
+                  <>
+                    Last Modified :{' '}
+                    {JsDateToString(termsAndConditionData.updatedAt)}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

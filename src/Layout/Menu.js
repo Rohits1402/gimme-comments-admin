@@ -206,10 +206,16 @@ export default function Menu() {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/app/about-us" className={`nav-link `}>
-                      <i className="nav-icon fa fa-info-circle" />
-                      <p>About Us</p>
+                    <Link to="/app/faq" className={`nav-link `}>
+                      <i className="nav-icon fa fa-question-circle" />
+                      <p>FAQ</p>
                     </Link>
+                  </li>
+                  <li
+                    className="nav-header rounded-2 text-bold my-2 "
+                    style={{ background: '#6c4da9' }}
+                  >
+                    DETAILS
                   </li>
                   <li className="nav-item">
                     <Link to="/app/contact-us" className={`nav-link `}>
@@ -218,9 +224,9 @@ export default function Menu() {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/app/faq" className={`nav-link `}>
-                      <i className="nav-icon fa fa-question-circle" />
-                      <p>FAQ</p>
+                    <Link to="/app/about-us" className={`nav-link `}>
+                      <i className="nav-icon fa fa-info-circle" />
+                      <p>About Us</p>
                     </Link>
                   </li>
                   <li className="nav-item">

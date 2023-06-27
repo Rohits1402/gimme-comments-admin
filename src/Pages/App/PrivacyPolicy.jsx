@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
+import { JsDateToString } from '../../Utils/dateEditor';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -114,7 +115,14 @@ const PrivacyPolicy = () => {
                   }
                 />
               </div>
-              <div className="card-footer clearfix d-flex justify-content-center"></div>
+              <div className="card-footer clearfix d-flex justify-content-end text-dark">
+                {privacyPolicyData.updatedAt && (
+                  <>
+                    Last Modified :{' '}
+                    {JsDateToString(privacyPolicyData.updatedAt)}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
