@@ -246,6 +246,7 @@ const Course = () => {
 
                       <th scope="col">Series</th>
                       {/* <th scope="col">Quizzes</th> */}
+                      <th scope="col">Featured</th>
                       <th scope="col">Manage</th>
                     </tr>
                   </thead>
@@ -304,6 +305,7 @@ const TableContent = ({
   courseCategoriesData,
 }) => {
   const navigate = useNavigate();
+  const { setIsLoading } = useStore();
 
   return (
     <>
@@ -315,6 +317,31 @@ const TableContent = ({
         </tr>
       ) : (
         paginatedData.map((data, index) => {
+          const handleToggleFeatured = async () => {
+            try {
+              setIsLoading(true);
+              await axios().patch(
+                `/api/v1/courses/featured-course/${data._id}`,
+                { is_featured: !data.is_featured }
+              );
+              Toast.fire({
+                icon: 'success',
+                title: 'Course featured status updated',
+              });
+              fetchCoursesData();
+              setIsLoading(false);
+            } catch (error) {
+              console.log(error);
+              Toast.fire({
+                icon: 'error',
+                title: error.response.data
+                  ? error.response.data.msg
+                  : error.message,
+              });
+              setIsLoading(false);
+            }
+          };
+
           return (
             <tr key={data._id}>
               <th scope="row">
@@ -364,6 +391,20 @@ const TableContent = ({
                   {data.course_quizzes.length}
                 </button>
               </td> */}
+              <td>
+                <div
+                  className="text-center"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleToggleFeatured()}
+                >
+                  <i
+                    className={`fa fa-star ${
+                      data.is_featured && 'text-yellow'
+                    }`}
+                    aria-hidden="true"
+                  />
+                </div>
+              </td>
               <td>
                 <ManageCourseModal
                   data={data}
