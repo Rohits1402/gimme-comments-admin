@@ -5,6 +5,7 @@ import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import QuizSectionQuestionOption from './QuizSectionQuestionOption';
+import UploadQuestionModal from './UploadQuestionModal';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -216,6 +217,9 @@ const QuizSectionQuestion = () => {
                   onChange={(e) => {
                     setSearchTermFilter(e.target.value);
                   }}
+                />
+                <UploadQuestionModal
+                  fetchQuizSectionQuestionData={fetchQuizSectionQuestionData}
                 />
                 <ManageCourseModal
                   fetchQuizSectionQuestionData={fetchQuizSectionQuestionData}

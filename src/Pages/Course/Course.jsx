@@ -349,7 +349,7 @@ const TableContent = ({
               </th>
               <td className="d-flex align-items-center">
                 <img
-                  src={data.profile_image || default_course_image}
+                  src={data.course_image || default_course_image}
                   alt="profile"
                   style={{
                     width: '30px',

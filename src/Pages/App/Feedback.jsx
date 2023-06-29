@@ -4,7 +4,6 @@ import Swal from 'sweetalert2';
 import axios from '../../Utils/axios';
 import { useStore } from '../../Contexts/StoreContext';
 import { JsDateToString } from '../../Utils/dateEditor';
-import { useNavigate } from 'react-router-dom';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -314,7 +313,6 @@ const TableContent = ({
 
 const ManageFeedbackModal = ({ data, fetchFeedbackData }) => {
   const CloseButton = useRef();
-  const navigate = useNavigate();
 
   const { setIsLoading } = useStore();
   const initialLocalData = {

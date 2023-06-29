@@ -31,7 +31,7 @@ const QuizSectionQuestionOption = ({ question_type, questionId }) => {
       );
 
       setOptionsData(response.data.options);
-      console.log(response.data.options);
+      // console.log(response.data.options);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
