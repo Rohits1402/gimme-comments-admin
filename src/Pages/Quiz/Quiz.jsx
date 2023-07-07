@@ -334,10 +334,12 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
   const initialLocalData = {
     quiz_name: '',
     quiz_description: '',
-    quiz_is_free: false,
+    quiz_terms_and_condition: '',
     quiz_duration: 0,
     break_between_sections: 0,
+    quiz_is_free: false,
     show_questions_randomly: false,
+    can_switch_sections: false,
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
@@ -455,7 +457,7 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog" role="document">
+        <div className="modal-dialog modal-lg" role="document">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
@@ -487,21 +489,46 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
                   })
                 }
               />
-              <label htmlFor="quiz_description" className="form-label mt-2">
-                Quiz Description
-              </label>
-              <textarea
-                type="text"
-                className="form-control"
-                id="quiz_description"
-                value={localData.quiz_description}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    quiz_description: e.target.value,
-                  })
-                }
-              />
+              <div className="row">
+                <div className="col-12 col-md-6">
+                  <label htmlFor="quiz_description" className="form-label mt-2">
+                    Quiz Description
+                  </label>
+                  <textarea
+                    type="text"
+                    className="form-control"
+                    id="quiz_description"
+                    value={localData.quiz_description}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        quiz_description: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="col-12 col-md-6">
+                  <label
+                    htmlFor="quiz_terms_and_condition"
+                    className="form-label mt-2"
+                  >
+                    Quiz Terms and Condition
+                  </label>
+                  <textarea
+                    type="text"
+                    className="form-control"
+                    id="quiz_terms_and_condition"
+                    value={localData.quiz_terms_and_condition}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        quiz_terms_and_condition: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
               <div className="row">
                 <div className="col-12 col-md-6">
                   <label htmlFor="quiz_duration" className="form-label mt-2">
@@ -594,6 +621,40 @@ const ManageCourseModal = ({ data, fetchQuizData }) => {
                     <option value="false">False</option>
                     <option value="true">True</option>
                   </select>
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="can_switch_sections"
+                  className="form-label mt-2"
+                >
+                  User can Switch Sections
+                </label>
+                <select
+                  className="form-select w-100"
+                  id="can_switch_sections"
+                  style={{
+                    background: localData.can_switch_sections
+                      ? '#23d483'
+                      : '#ff959e',
+                  }}
+                  value={localData.can_switch_sections}
+                  onChange={(e) =>
+                    setLocalData({
+                      ...localData,
+                      can_switch_sections:
+                        e.target.value === 'false' ? false : true,
+                    })
+                  }
+                >
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+                <div className="form-text" id="basic-addon4">
+                  If 'User can Switch Sections' = True, User can switch b/w
+                  multiple sections and 'Quiz Duration' is used otherwise User
+                  cannot switch b/w multiple sections and 'Section Duration' is
+                  used
                 </div>
               </div>
             </div>
