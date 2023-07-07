@@ -330,6 +330,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
     section_name: '',
     section_description: '',
     section_duration: 0,
+    questions_to_answer: 0,
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
@@ -507,6 +508,25 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
                   })
                 }
               />
+              <label htmlFor="questions_to_answer" className="form-label mt-2">
+                Questions to answer
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="questions_to_answer"
+                value={localData.questions_to_answer}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    questions_to_answer: Number(e.target.value),
+                  })
+                }
+              />
+              <div className="form-text" id="basic-addon4">
+                Number of Questions answered by User to be evaluated for marking
+                (keep 0 to skip)
+              </div>
             </div>
 
             <div className="modal-footer">
