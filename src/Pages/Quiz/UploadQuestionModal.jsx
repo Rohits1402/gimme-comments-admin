@@ -260,6 +260,7 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
                   value={questionType}
                   onChange={(e) => {
                     setQuestionType(e.target.value);
+                    setExcelFileData([]);
                   }}
                 >
                   <option value="scq">Single Choice</option>
