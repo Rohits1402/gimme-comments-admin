@@ -326,6 +326,7 @@ const ManageCourseModal = ({ data, fetchCourseSeriesPlanData }) => {
     plan_duration: 0,
     plan_original_price: 0,
     plan_discounted_price: 0,
+    plan_points_redeemable: 0,
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
@@ -518,6 +519,24 @@ const ManageCourseModal = ({ data, fetchCourseSeriesPlanData }) => {
                   setLocalData({
                     ...localData,
                     plan_discounted_price: Number(e.target.value),
+                  })
+                }
+              />
+              <label
+                htmlFor="plan_points_redeemable"
+                className="form-label mt-2"
+              >
+                Max referral points redeemable when buying plan
+              </label>
+              <input
+                type="number"
+                className="form-control"
+                id="plan_points_redeemable"
+                value={localData.plan_points_redeemable}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    plan_points_redeemable: Number(e.target.value),
                   })
                 }
               />
