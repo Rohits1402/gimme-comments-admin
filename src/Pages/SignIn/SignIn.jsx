@@ -108,10 +108,13 @@ export default function SignIn() {
         res = await signInWithPopup(auth, googleAuthProvider);
         await signOut(auth);
 
-        const response = await axios().post('/api/v1/auth/social/login', {
-          provider: 'google',
-          google_login_uid: res.user.uid,
-        });
+        const response = await axios().post(
+          process.env.REACT_APP_BASE_URL + '/api/v1/auth/social/login',
+          {
+            provider: 'google',
+            google_login_uid: res.user.uid,
+          }
+        );
 
         console.log(response);
 
@@ -122,10 +125,13 @@ export default function SignIn() {
         res = await signInWithPopup(auth, facebookAuthProvider);
         await signOut(auth);
 
-        const response = await axios().post('/api/v1/auth/social/login', {
-          provider: 'facebook',
-          facebook_login_uid: res.user.uid,
-        });
+        const response = await axios().post(
+          process.env.REACT_APP_BASE_URL + '/api/v1/auth/social/login',
+          {
+            provider: 'facebook',
+            facebook_login_uid: res.user.uid,
+          }
+        );
 
         console.log(response);
 
