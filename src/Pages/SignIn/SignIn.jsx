@@ -5,6 +5,14 @@ import axios from '../../Utils/axios';
 import loginPageSigeImg from '../../assets/loginPageSigeImg.png';
 import { useStore } from '../../Contexts/StoreContext';
 
+import { auth } from '../../Utils/firebaseConfig';
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signOut,
+} from 'firebase/auth';
+
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
@@ -18,6 +26,9 @@ const Toast = Swal.mixin({
 });
 
 export default function SignIn() {
+  const googleAuthProvider = new GoogleAuthProvider();
+  const facebookAuthProvider = new FacebookAuthProvider();
+
   const { accessToken, setIsLoading } = useStore();
   const [userData, setUserData] = useState({
     email: '',
@@ -83,6 +94,54 @@ export default function SignIn() {
       Toast.fire({
         icon: 'error',
         title: err.response.data?.msg || err.message,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginWithSocialAccount = async (e, provider) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      let res;
+      if (provider === 'google') {
+        res = await signInWithPopup(auth, googleAuthProvider);
+        await signOut(auth);
+
+        const response = await axios().post('/api/v1/auth/social/login', {
+          provider: 'google',
+          google_login_uid: res.user.uid,
+        });
+
+        console.log(response);
+
+        localStorage.setItem('access_token', response.data.token);
+        localStorage.setItem('access_level', response.data.role);
+        window.location.reload();
+      } else if (provider === 'facebook') {
+        res = await signInWithPopup(auth, facebookAuthProvider);
+        await signOut(auth);
+
+        const response = await axios().post('/api/v1/auth/social/login', {
+          provider: 'facebook',
+          facebook_login_uid: res.user.uid,
+        });
+
+        console.log(response);
+
+        localStorage.setItem('access_token', response.data.token);
+        localStorage.setItem('access_level', response.data.role);
+        window.location.reload();
+      } else {
+        Toast.fire({ icon: 'success', title: 'Please provide valid provider' });
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: 'error',
+        title: error.response.data ? error.response.data.msg : error.message,
       });
       setIsLoading(false);
     }
@@ -241,34 +300,36 @@ export default function SignIn() {
             <button
               type="submit"
               className="btn btn-light w-100 my-2"
-              onClick={async () => {
-                window.open(
-                  process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google',
-                  '_blank'
-                );
-                // await axios().get(
-                //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google'
-                // );
-                // window.location.href =
-                //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google';
-              }}
+              onClick={(e) => handleLoginWithSocialAccount(e, 'google')}
+              // onClick={async () => {
+              //   window.open(
+              //     process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google',
+              //     '_blank'
+              //   );
+              // await axios().get(
+              //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google'
+              // );
+              // window.location.href =
+              //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google';
+              // }}
             >
               Google Login
             </button>
             <button
               type="submit"
               className="btn btn-primary w-100"
-              onClick={async () => {
-                window.open(
-                  process.env.REACT_APP_BASE_URL +
-                    '/api/v1/auth/login/facebook',
-                  '_blank'
-                );
+              onClick={(e) => handleLoginWithSocialAccount(e, 'facebook')}
+              // onClick={async () => {
+              //   window.open(
+              //     process.env.REACT_APP_BASE_URL +
+              //       '/api/v1/auth/login/facebook',
+              //     '_blank'
+              //   );
 
-                // await axios().get(
-                //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/facebook'
-                // );
-              }}
+              // await axios().get(
+              //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/facebook'
+              // );
+              // }}
             >
               Facebook Login
             </button>
