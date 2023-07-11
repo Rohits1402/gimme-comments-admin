@@ -6,6 +6,7 @@ import { useStore } from '../../Contexts/StoreContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import QuizSectionQuestionOption from './QuizSectionQuestionOption';
 import UploadQuestionModal from './UploadQuestionModal';
+import UploadImageModal from './UploadImageModal';
 
 const Toast = Swal.mixin({
   toast: true,
@@ -218,6 +219,7 @@ const QuizSectionQuestion = () => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
+                <UploadImageModal />
                 <UploadQuestionModal
                   fetchQuizSectionQuestionData={fetchQuizSectionQuestionData}
                 />
