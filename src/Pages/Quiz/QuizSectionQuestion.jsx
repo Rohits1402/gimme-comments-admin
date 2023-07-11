@@ -374,6 +374,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
     question_duration: 1,
     question_marks: 1,
     question_is_correct: false,
+    question_char_limit: 0,
   };
 
   const [imageData, setImageData] = useState(null);
@@ -740,6 +741,29 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                     <option value={true}>True</option>
                     <option value={false}>False</option>
                   </select>
+                </>
+              )}
+
+              {localData.question_type === 'essay' && (
+                <>
+                  <label
+                    htmlFor="question_char_limit"
+                    className="form-label mt-2"
+                  >
+                    Answer character limit
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="question_char_limit"
+                    value={localData.question_char_limit}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_char_limit: Number(e.target.value),
+                      })
+                    }
+                  />
                 </>
               )}
 
