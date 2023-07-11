@@ -7,7 +7,7 @@ export default function Footer() {
     <>
       <footer className="main-footer">
         <strong style={{ color: '#775DA8' }}>
-          NavyaTLM |{accessLevel === 'teacher' ? ' Teacher ' : ' Admin '}
+          Navya |{accessLevel === 'teacher' ? ' Teacher ' : ' Admin '}
           Portal
         </strong>
         <div className="float-right d-none d-sm-inline-block">
