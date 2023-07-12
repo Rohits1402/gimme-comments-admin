@@ -375,6 +375,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
     question_type: 'scq',
     question_duration: 1,
     question_marks: 1,
+    question_negative_marking: 0,
     question_is_correct: false,
     question_char_limit: 0,
   };
@@ -655,7 +656,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                 }
               />
               <div className="row">
-                <div className="col-12 col-md-4">
+                <div className="col-12 col-md-6">
                   <label htmlFor="question_type" className="form-label mt-2">
                     Type
                   </label>
@@ -676,7 +677,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                     <option value="essay">Essay</option>
                   </select>
                 </div>
-                <div className="col-12 col-md-4">
+                <div className="col-12 col-md-6">
                   <label
                     htmlFor="question_duration"
                     className="form-label mt-2"
@@ -696,12 +697,14 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                     }
                   />
                 </div>
-                <div className="col-12 col-md-4">
+              </div>
+              <div className="row">
+                <div className="col-12 col-md-6">
                   <label htmlFor="question_marks" className="form-label mt-2">
                     Marks
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     id="question_marks"
                     value={localData.question_marks}
@@ -709,6 +712,26 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                       setLocalData({
                         ...localData,
                         question_marks: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <div className="col-12 col-md-6">
+                  <label
+                    htmlFor="question_negative_marking"
+                    className="form-label mt-2"
+                  >
+                    Negative Marks
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="question_negative_marking"
+                    value={localData.question_negative_marking}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_negative_marking: Number(e.target.value),
                       })
                     }
                   />
