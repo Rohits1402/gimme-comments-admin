@@ -108,8 +108,9 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
         let questionToAdd = {
           question_image: questionData[1][0].question_image || '',
           question_title: questionData[1][0].question_title || '',
-          question_answer_explanation:
-            questionData[1][0].question_answer_explanation || '',
+          question_title_hindi: questionData[1][0].question_title_hindi || '',
+          // question_answer_explanation:
+          //   questionData[1][0].question_answer_explanation || '',
           question_marks: Number(questionData[1][0].question_marks) || 1,
           question_negative_marking:
             Number(questionData[1][0].question_negative_marking) || 0,
@@ -137,6 +138,7 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
             const optionToAdd = {
               option_image: optionData.option_image || '',
               option_title: optionData.option_title || '',
+              option_title_hindi: optionData.option_title_hindi || '',
               is_correct:
                 optionData.is_correct?.toLowerCase() === 'true' ? true : false,
             };
@@ -173,7 +175,8 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
     let header = [
       'question_image',
       'question_title',
-      'question_answer_explanation',
+      'question_title_hindi',
+      // 'question_answer_explanation',
       'question_marks',
       'question_negative_marking',
     ];
@@ -181,6 +184,7 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
     if (questionType === 'mcq' || questionType === 'scq') {
       header.push('option_image');
       header.push('option_title');
+      header.push('option_title_hindi');
       header.push('is_correct');
     }
     if (questionType === 'essay') {
@@ -303,7 +307,8 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
                         <th scope="col">#</th>
                         <th scope="col">Image</th>
                         <th scope="col">Question</th>
-                        <th scope="col">Explanation</th>
+                        <th scope="col">Question (Hindi)</th>
+                        {/* <th scope="col">Explanation</th> */}
                         <th scope="col">Marks</th>
                         <th scope="col">Negative</th>
                         {questionType === 'essay' && (
@@ -323,9 +328,12 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
                               <td>{rowData[1][0].question_image || ''}</td>
                               <td>{rowData[1][0].question_title || ''}</td>
                               <td>
+                                {rowData[1][0].question_title_hindi || ''}
+                              </td>
+                              {/* <td>
                                 {rowData[1][0].question_answer_explanation ||
                                   ''}
-                              </td>
+                              </td> */}
                               <td>{rowData[1][0].question_marks || 1}</td>
                               <td>
                                 {rowData[1][0].question_negative_marking || 0}
@@ -356,6 +364,7 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
                                           <th scope="col">#</th>
                                           <th scope="col">Image</th>
                                           <th scope="col">Option</th>
+                                          <th scope="col">Option (Hindi)</th>
                                           <th scope="col">Is Correct</th>
                                         </tr>
                                       </thead>
@@ -374,6 +383,10 @@ const UploadQuestionModal = ({ fetchQuizSectionQuestionData }) => {
                                                   </td>
                                                   <td>
                                                     {optionData.option_title ||
+                                                      ''}
+                                                  </td>
+                                                  <td>
+                                                    {optionData.option_title_hindi ||
                                                       ''}
                                                   </td>
                                                   <td>
@@ -433,51 +446,61 @@ const ExampleObj = {
     {
       question_image: 'question_image_url',
       question_title: 'question_one',
-      question_answer_explanation: 'question_one_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_one_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_one_option_one',
+      option_title_hindi: 'option_hindi',
       is_correct: 'true',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_one',
-      question_answer_explanation: 'question_one_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_one_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_one_option_two',
+      option_title_hindi: 'option_hindi',
       is_correct: 'false',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_two',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_two_option_one',
+      option_title_hindi: 'option_hindi',
       is_correct: 'true',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_two',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_two_option_two',
+      option_title_hindi: 'option_hindi',
       is_correct: 'false',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_two',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_two_option_three',
+      option_title_hindi: 'option_hindi',
       is_correct: 'false',
     },
   ],
@@ -485,51 +508,61 @@ const ExampleObj = {
     {
       question_image: 'question_image_url',
       question_title: 'question_one',
-      question_answer_explanation: 'question_one_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_one_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_one_option_one',
+      option_title_hindi: 'option_hindi',
       is_correct: 'true',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_one',
-      question_answer_explanation: 'question_one_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_one_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_one_option_two',
+      option_title_hindi: 'option_hindi',
       is_correct: 'false',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_two',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_two_option_one',
+      option_title_hindi: 'option_hindi',
       is_correct: 'true',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_two',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_two_option_two',
+      option_title_hindi: 'option_hindi',
       is_correct: 'true',
     },
     {
       question_image: 'question_image_url',
       question_title: 'question_two',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       option_image: 'option_image_url',
       option_title: 'question_two_option_three',
+      option_title_hindi: 'option_hindi',
       is_correct: 'false',
     },
   ],
@@ -537,7 +570,8 @@ const ExampleObj = {
     {
       question_image: 'question_image_url',
       question_title: 'question_one',
-      question_answer_explanation: 'question_one_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_one_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       question_is_correct: 'true',
@@ -545,7 +579,8 @@ const ExampleObj = {
     {
       question_image: 'question_image_url',
       question_title: 'question_tow',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '1',
       question_negative_marking: '0',
       question_is_correct: 'false',
@@ -555,7 +590,8 @@ const ExampleObj = {
     {
       question_image: 'question_image_url',
       question_title: 'question_one',
-      question_answer_explanation: 'question_one_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_one_explanation',
       question_marks: '4',
       question_negative_marking: '1',
       question_char_limit: '1000',
@@ -563,7 +599,8 @@ const ExampleObj = {
     {
       question_image: 'question_image_url',
       question_title: 'question_tow',
-      question_answer_explanation: 'question_two_explanation',
+      question_title_hindi: 'question_hindi',
+      // question_answer_explanation: 'question_two_explanation',
       question_marks: '1',
       question_negative_marking: '0',
       question_char_limit: '500',

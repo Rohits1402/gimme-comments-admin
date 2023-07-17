@@ -79,12 +79,14 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
   const initialOptionsData = {
     option_image: '',
     option_title: '',
+    option_title_hindi: '',
     is_correct: false,
   };
 
   const [localData, setLocalData] = useState(initialOptionsData);
   const [imageData, setImageData] = useState(null);
   const [inEditMode, setInEditMode] = useState(false);
+  const [englishLanguage, setEnglishLanguage] = useState(true);
 
   useEffect(() => {
     if (!data) return;
@@ -199,21 +201,43 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
           backgroundColor: localData.is_correct ? '#b2ffdc' : '#ffdcdf',
         }}
       >
-        <textarea
-          type="text"
-          rows="1"
-          className="form-control"
-          id="option_title"
-          placeholder="Add Option"
-          value={localData.option_title}
-          disabled={data && !inEditMode}
-          onChange={(e) =>
-            setLocalData({
-              ...localData,
-              option_title: e.target.value,
-            })
-          }
-        />
+        {englishLanguage ? (
+          <>
+            <textarea
+              type="text"
+              rows="1"
+              className="form-control"
+              id="option_title"
+              placeholder="Add Option (English)"
+              value={localData.option_title}
+              disabled={data && !inEditMode}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  option_title: e.target.value,
+                })
+              }
+            />
+          </>
+        ) : (
+          <>
+            <textarea
+              type="text"
+              rows="1"
+              className="form-control"
+              id="option_title_hindi"
+              placeholder="Add Option (Hindi)"
+              value={localData.option_title_hindi}
+              disabled={data && !inEditMode}
+              onChange={(e) =>
+                setLocalData({
+                  ...localData,
+                  option_title_hindi: e.target.value,
+                })
+              }
+            />
+          </>
+        )}
         <div className="d-flex gap-2 mt-2 overflow-auto">
           <select
             className="form-select"
@@ -232,6 +256,18 @@ const ManageOption = ({ data, questionId, fetchOptionsData }) => {
           >
             <option value={true}>True</option>
             <option value={false}>False</option>
+          </select>
+          <select
+            className="form-select"
+            id="englishLanguage"
+            disabled={data && !inEditMode}
+            value={englishLanguage}
+            onChange={(e) => {
+              setEnglishLanguage(e.target.value === 'true' ? true : false);
+            }}
+          >
+            <option value={true}>English</option>
+            <option value={false}>Hindi</option>
           </select>
 
           {data && localData.option_image && (

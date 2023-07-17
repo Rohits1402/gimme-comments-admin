@@ -307,17 +307,6 @@ export default function SignIn() {
               type="submit"
               className="btn btn-light w-100 my-2"
               onClick={(e) => handleLoginWithSocialAccount(e, 'google')}
-              // onClick={async () => {
-              //   window.open(
-              //     process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google',
-              //     '_blank'
-              //   );
-              // await axios().get(
-              //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google'
-              // );
-              // window.location.href =
-              //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/google';
-              // }}
             >
               Google Login
             </button>
@@ -325,97 +314,12 @@ export default function SignIn() {
               type="submit"
               className="btn btn-primary w-100"
               onClick={(e) => handleLoginWithSocialAccount(e, 'facebook')}
-              // onClick={async () => {
-              //   window.open(
-              //     process.env.REACT_APP_BASE_URL +
-              //       '/api/v1/auth/login/facebook',
-              //     '_blank'
-              //   );
-
-              // await axios().get(
-              //   process.env.REACT_APP_BASE_URL + '/api/v1/auth/login/facebook'
-              // );
-              // }}
             >
               Facebook Login
             </button>
           </form>
         </div>
       </div>
-      {/* <div className="row justify-content-center mt-5">
-        <div className="col-md-5">imgStyle
-          <div className="card card-info">
-            <div className="card-header">
-              <h3 className="card-title">Sign In</h3>
-            </div>
-            <form className="form-horizontal">
-              <div className="card-body">
-                <div className="form-group row">
-                  <label
-                    htmlFor="emailField"
-                    className="col-sm-2 col-form-label"
-                  >
-                    Email
-                  </label>
-                  <div className="col-sm-10">
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="emailField"
-                      placeholder="example@email.com"
-                      value={Email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="form-group row">
-                  <label
-                    htmlFor="passwordField"
-                    className="col-sm-2 col-form-label"
-                  >
-                    Password
-                  </label>
-                  <div className="col-sm-10">
-                    <input
-                      type="password"
-                      className="form-control"
-                      id="passwordField"
-                      placeholder="Password"
-                      value={Password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="form-group row">
-                  <div className="offset-sm-2 col-sm-10">
-                    <div className="form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="rememberMe"
-                        onChange={(e) => setRememberMe(!RememberMe)}
-                        defaultChecked={RememberMe}
-                      />
-                      <label className="form-check-label" htmlFor="rememberMe">
-                        Remember me
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="card-footer">
-                <button
-                  type="submit"
-                  className="btn btn-info"
-                  onClick={(e) => signUserIn(e)}
-                >
-                  Sign in
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 }

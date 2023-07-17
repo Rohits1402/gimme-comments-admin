@@ -371,7 +371,9 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
   const { setIsLoading } = useStore();
   const initialLocalData = {
     question_title: '',
-    question_answer_explanation: '',
+    question_title_hindi: '',
+    // question_answer_explanation: '',
+    // question_answer_explanation_hindi: '',
     question_type: 'scq',
     question_duration: 1,
     question_marks: 1,
@@ -382,6 +384,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
 
   const [imageData, setImageData] = useState(null);
   const [localData, setLocalData] = useState(initialLocalData);
+  const [navTab, setNavTab] = useState(1);
 
   useEffect(() => {
     if (!data) return;
@@ -565,21 +568,64 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
               </button>
             </div>
             <div className="modal-body">
-              <label htmlFor="question_title" className="form-label mt-2">
-                Question
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="question_title"
-                value={localData.question_title}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    question_title: e.target.value,
-                  })
-                }
-              />
+              <nav className="nav nav-pills flex-column flex-sm-row mb-2 bg-body-secondary">
+                <button
+                  className={`flex-sm-fill text-sm-center nav-link ${
+                    navTab === 1 && 'active'
+                  }`}
+                  onClick={() => setNavTab(1)}
+                >
+                  English
+                </button>
+                <button
+                  className={`flex-sm-fill text-sm-center nav-link ${
+                    navTab === 2 && 'active'
+                  }`}
+                  onClick={() => setNavTab(2)}
+                >
+                  Hindi
+                </button>
+              </nav>
+              {navTab === 1 ? (
+                <>
+                  <label htmlFor="question_title" className="form-label mt-2">
+                    Question (English)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="question_title"
+                    value={localData.question_title}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_title: e.target.value,
+                      })
+                    }
+                  />
+                </>
+              ) : (
+                <>
+                  <label
+                    htmlFor="question_title_hindi"
+                    className="form-label mt-2"
+                  >
+                    Question (Hindi)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="question_title_hindi"
+                    value={localData.question_title_hindi}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_title_hindi: e.target.value,
+                      })
+                    }
+                  />
+                </>
+              )}
 
               {data ? (
                 <>
@@ -636,25 +682,49 @@ const ManageCourseModal = ({ data, fetchQuizSectionQuestionData }) => {
                   </div>
                 </>
               )}
-
-              <label
-                htmlFor="question_answer_explanation"
-                className="form-label mt-2"
-              >
-                Answer Explanation
-              </label>
-              <textarea
-                type="text"
-                className="form-control"
-                id="question_answer_explanation"
-                value={localData.question_answer_explanation}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    question_answer_explanation: e.target.value,
-                  })
-                }
-              />
+              {/* {navTab === 1 ? (
+                <>
+                  <label
+                    htmlFor="question_answer_explanation"
+                    className="form-label mt-2"
+                  >
+                    Answer Explanation
+                  </label>
+                  <textarea
+                    type="text"
+                    className="form-control"
+                    id="question_answer_explanation"
+                    value={localData.question_answer_explanation}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_answer_explanation: e.target.value,
+                      })
+                    }
+                  />
+                </>
+              ) : (
+                <>
+                  <label
+                    htmlFor="question_answer_explanation_hindi"
+                    className="form-label mt-2"
+                  >
+                    Answer Explanation
+                  </label>
+                  <textarea
+                    type="text"
+                    className="form-control"
+                    id="question_answer_explanation_hindi"
+                    value={localData.question_answer_explanation_hindi}
+                    onChange={(e) =>
+                      setLocalData({
+                        ...localData,
+                        question_answer_explanation_hindi: e.target.value,
+                      })
+                    }
+                  />
+                </>
+              )} */}
               <div className="row">
                 <div className="col-12 col-md-6">
                   <label htmlFor="question_type" className="form-label mt-2">
