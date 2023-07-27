@@ -1,6 +1,7 @@
 import { React, useState } from 'react'
 import Swal from 'sweetalert2'
 import axios from '../../../Utils/axios'
+import { useNavigate, Link } from 'react-router-dom'
 
 const Toast = Swal.mixin({
   toast: true,
@@ -15,71 +16,57 @@ const Toast = Swal.mixin({
 })
 
 const Login = () => {
-  //   const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
   const [showPassword, setShowPassword] = useState(false)
 
-  const signUserIn = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     if (email === '')
       return Toast.fire({ icon: 'error', title: 'Email required' })
     if (password === '')
       return Toast.fire({ icon: 'error', title: 'Password required' })
 
-    const params = {
-      password: password,
-    }
-
-    if (email) {
-      params.email = email
-    }
-
     try {
-      const res = await axios().post(
-        process.env.REACT_APP_BASE_URL + '/api/v1/auth/login',
-        params,
-      )
+      const res = await axios().post('/api/v1/auth/login', {
+        email,
+        password,
+      })
 
-      console.log(res)
-      //   Toast.fire({
-      //     icon: 'success',
-      //     title: 'Logged In',
-      //   })
+      console.log(res.data)
 
-      if (res.status === 200) {
-        Toast.fire({
-          icon: 'success',
-          title: 'Logged In',
-        })
-      }
+      Toast.fire({
+        icon: 'success',
+        title: 'Logged In',
+      })
 
-      if (!(res.status === 200)) {
-        Toast.fire({
-          icon: 'error',
-          title: 'Invalid Credentials',
-        })
-        return
-      }
-
-      localStorage.setItem('access_token', res.data.token)
-      localStorage.setItem('access_level', res.data.role)
-      window.location.reload()
+      setTimeout(() => {
+        localStorage.setItem('gimme_comment_access_token', res.data.token)
+        window.location.reload()
+      }, 1000)
     } catch (err) {
       console.log(err)
-      Toast.fire({
-        icon: 'error',
-        title: err.response.data?.msg || err.message,
-      })
+      if (err.response.data.msg === 'Email is not verified') {
+        Toast.fire({
+          icon: 'error',
+          title: err.response.data ? err.response.data.msg : err.message,
+        })
+        navigate('/verify-account')
+      } else {
+        Toast.fire({
+          icon: 'error',
+          title: err.response.data ? err.response.data.msg : err.message,
+        })
+      }
     }
   }
 
   return (
     <>
       <form className="form-horizontal">
-        <h2 style={{ color: '#775DA8' }}>Login | Admin</h2>
+        <h2 style={{ color: '#775DA8' }}>Login | Developer</h2>
         <h6>Please enter your log in details</h6>
         {/* <span>Login with : </span> */}
 
@@ -136,11 +123,21 @@ const Login = () => {
         <button
           type="submit"
           className="btn btn-success w-100"
-          onClick={(e) => signUserIn(e)}
+          onClick={(e) => handleLogin(e)}
         >
           Sign in
         </button>
       </form>
+
+      <div className="my-2 text-center ">
+        <Link to="/forget-password">Forget Password?</Link>
+      </div>
+      <hr style={{ width: '80vw', margin: '0 auto' }} />
+      <Link to="/sign-up">
+        <button className="btn btn-primary w-100 mt-2">
+          Create new Account
+        </button>
+      </Link>
     </>
   )
 }

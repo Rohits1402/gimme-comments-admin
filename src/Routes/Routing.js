@@ -168,7 +168,7 @@ const UnprotectedRoute = () => {
   if (access_token) {
     return (
       <>
-        <Navigate to="/dashboard" />
+        <Navigate to="/" />
       </>
     )
   } else {
