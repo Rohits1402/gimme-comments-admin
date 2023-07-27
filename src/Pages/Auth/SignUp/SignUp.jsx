@@ -49,7 +49,7 @@ const SignUp = () => {
       })
 
       if (res.data) {
-        navigate('/')
+        navigate('/sign-in')
       }
     } catch (err) {
       console.log(err)
