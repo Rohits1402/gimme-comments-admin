@@ -1,38 +1,43 @@
-import React from 'react';
-import { Route, Routes, Navigate, Outlet } from 'react-router-dom';
-import { useStore } from '../Contexts/StoreContext';
+import React from 'react'
+import { Route, Routes, Navigate, Outlet } from 'react-router-dom'
+import { useStore } from '../Contexts/StoreContext'
 
-import Header from '../Layout/Header';
-import Menu from '../Layout//Menu';
-import Footer from '../Layout//Footer';
+import Header from '../Layout/Header'
+import Menu from '../Layout//Menu'
+import Footer from '../Layout//Footer'
+import AuthLayout from '../Layout/AuthLayout'
+import Home from '../Pages/Home/Home'
+import Login from '../Pages/Auth/Login/Login'
+import SignUp from '../Pages/Auth/SignUp/SignUp'
+import VerifyAccount from '../Pages/Auth/VerifyAccount/VerifyAccount'
+import ForgetPassword from '../Pages/Auth/ForgetPassword/ForgetPassword'
 
-import SignIn from '../Pages/SignIn/SignIn';
-import Dashboard from '../Pages/Dashboard/Dashboard';
-import AppBanner from '../Pages/App/Banner';
-import AppEvent from '../Pages/App/Event';
-import AppFeedback from '../Pages/App/Feedback';
-import AppWelcomeScreen from '../Pages/App/WelcomeScreen';
-import AppNotification from '../Pages/App/Notification';
-import AppAboutUs from '../Pages/App/AboutUs';
-import AppContactUs from '../Pages/App/ContactUs';
-import AppFAQ from '../Pages/App/FAQ';
-import AppHelp from '../Pages/App/Help';
-import AppPrivacyPolicy from '../Pages/App/PrivacyPolicy';
-import AppTermsAndCondition from '../Pages/App/TermsAndCondition';
+import SignIn from '../Pages/SignIn/SignIn'
+import Dashboard from '../Pages/Dashboard/Dashboard'
+import AppBanner from '../Pages/App/Banner'
+import AppEvent from '../Pages/App/Event'
+import AppFeedback from '../Pages/App/Feedback'
+import AppWelcomeScreen from '../Pages/App/WelcomeScreen'
+import AppNotification from '../Pages/App/Notification'
+import AppAboutUs from '../Pages/App/AboutUs'
+import AppContactUs from '../Pages/App/ContactUs'
+import AppFAQ from '../Pages/App/FAQ'
+import AppHelp from '../Pages/App/Help'
+import AppPrivacyPolicy from '../Pages/App/PrivacyPolicy'
+import AppTermsAndCondition from '../Pages/App/TermsAndCondition'
 
-import Profile from '../Pages/Profile/Profile';
-import Customers from '../Pages/Customers/Customers';
-import CustomerProfile from '../Pages/Customers/CustomerProfile';
-import CourseCategory from '../Pages/CourseCategory/CourseCategory';
-import Course from '../Pages/Course/Course';
-import CourseSeries from '../Pages/Course/CourseSeries';
-import CourseSeriesPlan from '../Pages/Course/CourseSeriesPlan';
-import Quiz from '../Pages/Quiz/Quiz';
-import QuizSection from '../Pages/Quiz/QuizSection';
-import QuizSectionQuestion from '../Pages/Quiz/QuizSectionQuestion';
-
+import Profile from '../Pages/Profile/Profile'
+import Customers from '../Pages/Customers/Customers'
+import CustomerProfile from '../Pages/Customers/CustomerProfile'
+import CourseCategory from '../Pages/CourseCategory/CourseCategory'
+import Course from '../Pages/Course/Course'
+import CourseSeries from '../Pages/Course/CourseSeries'
+import CourseSeriesPlan from '../Pages/Course/CourseSeriesPlan'
+import Quiz from '../Pages/Quiz/Quiz'
+import QuizSection from '../Pages/Quiz/QuizSection'
+import QuizSectionQuestion from '../Pages/Quiz/QuizSectionQuestion'
 export default function Routing() {
-  const { isLoading, setIsLoading } = useStore();
+  const { isLoading, setIsLoading } = useStore()
 
   return (
     <div
@@ -70,12 +75,21 @@ export default function Routing() {
           Close
         </button>
       </div>
+
       <Routes>
-        <Route path="/sign-in" element={<SignIn />} />
+        <Route element={<UnprotectedRoute />}>
+          <Route path="/" element={<Home />} />
+          Home
+          <Route element={<AuthLayout />}>
+            <Route exact path="/sign-in" element={<Login />} />
+            <Route exact path="/sign-up" element={<SignUp />} />
+            <Route exact path="/verify-account" element={<VerifyAccount />} />
+            <Route exact path="/forget-password" element={<ForgetPassword />} />
+          </Route>
+        </Route>
+
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Dashboard />} />
-
           <Route path="/app">
             <Route path="banner" element={<AppBanner />} />
             <Route path="event" element={<AppEvent />} />
@@ -128,11 +142,11 @@ export default function Routing() {
         <Route path="/*" element={<div>Not Found</div>} />
       </Routes>
     </div>
-  );
+  )
 }
 
 const ProtectedRoute = () => {
-  const access_token = localStorage.getItem('access_token');
+  const access_token = localStorage.getItem('gimme_comment_access_token')
 
   if (access_token) {
     return (
@@ -142,8 +156,22 @@ const ProtectedRoute = () => {
         <Outlet />
         <Footer />
       </>
-    );
+    )
   } else {
-    return <Navigate to="/sign-in" />;
+    return <Navigate to="/sign-in" />
   }
-};
+}
+
+const UnprotectedRoute = () => {
+  const access_token = localStorage.getItem('gimme_comment_access_token')
+
+  if (access_token) {
+    return (
+      <>
+        <Navigate to="/dashboard" />
+      </>
+    )
+  } else {
+    return <Outlet />
+  }
+}
