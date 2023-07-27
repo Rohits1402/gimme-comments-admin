@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Outlet } from 'react-router-dom'
 
 import loginPageSigeImg from '../assets/loginPageSigeImg.png'
@@ -18,7 +18,7 @@ export default function AuthLayout() {
         />
         <div
           style={{ width: '50%' }}
-          className="d-flex justify-content-center align-items-center col-12 col-md-6 p-4"
+          className="d-flex flex-column justify-content-center align-items-center col-12 col-md-6 p-4"
         >
           <Outlet />
         </div>
