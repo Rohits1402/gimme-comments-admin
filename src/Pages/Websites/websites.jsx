@@ -1,88 +1,87 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import axios from '../../Utils/axios';
-import { useStore } from '../../Contexts/StoreContext';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import axios from "../../Utils/axios";
+import { useStore } from "../../Contexts/StoreContext";
+import { JsDateToString, FormDateToJs } from "../../Utils/dateEditor";
 
 const Toast = Swal.mixin({
   toast: true,
-  position: 'top-end',
+  position: "top-end",
   showConfirmButton: false,
   timer: 3000,
   timerProgressBar: true,
   didOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer);
-    toast.addEventListener('mouseleave', Swal.resumeTimer);
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
   },
 });
 
-const QuizSection = () => {
-  const navigate = useNavigate();
-  const { courseId, courseSeriesId, quizId } = useParams();
+const Event = () => {
   const { setIsLoading } = useStore();
-
-  const [quizSectionData, setQuizSectionData] = useState([]);
+  const [eventData, setEventData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
 
-  const [searchTermFilter, setSearchTermFilter] = useState('');
-  const [sortingOn, setSortingOn] = useState('section_name');
+  const [searchTermFilter, setSearchTermFilter] = useState("");
+  const [sortingOn, setSortingOn] = useState("event_title");
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [rowsPerPage, setRowsPerPage] = useState(20);
   const rowsPerPage = 20;
 
-  // getting quiz section data from database
-  const fetchQuizSectionData = async () => {
-    if (!courseSeriesId || !quizId) return;
+  // getting banner data from database
+  const fetchEventData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/quizzes/section/${quizId}`);
-
-      setQuizSectionData(response.data.sections);
-      console.log(response.data.sections);
+      const response = await axios().get(`/api/v1/app/websites/`);
+      let events = response.data.events.map((d) => {
+        d.event_delivery_time = JsDateToString(d.event_delivery_time);
+        return d;
+      });
+      setEventData(events);
+      console.log(events);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
       Toast.fire({
-        icon: 'error',
+        icon: "error",
         title: error.response.data ? error.response.data.msg : error.message,
       });
       setIsLoading(false);
-      navigate('/courses');
     }
   };
 
   useEffect(() => {
-    fetchQuizSectionData();
+    fetchEventData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseSeriesId]);
+  }, [setIsLoading]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
-    const tempQuizSectionData = quizSectionData;
-
     // filtering according to search term filter
-    const tempSearchTermFilterData = tempQuizSectionData.filter((course) => {
-      if (searchTermFilter === '') {
-        return true;
-      } else {
-        if (
-          course['section_name']
-            .toLowerCase()
-            .includes(searchTermFilter.toLowerCase())
-        ) {
+    const tempCourseCategoriesData = eventData;
+    const tempSearchTermFilterData = tempCourseCategoriesData.filter(
+      (category) => {
+        if (searchTermFilter === "") {
           return true;
         } else {
-          return false;
+          if (
+            category["event_title"]
+              .toLowerCase()
+              .includes(searchTermFilter.toLowerCase())
+          ) {
+            return true;
+          } else {
+            return false;
+          }
         }
       }
-    });
+    );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [quizSectionData, searchTermFilter]);
+  }, [eventData, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -139,8 +138,8 @@ const QuizSection = () => {
             <div className="row mb-2">
               <div className="col-sm-6">
                 <h1 className="m-0">
-                  <i className="nav-icon fa fa-list me-2" />
-                  Sections
+                  <i className="nav-icon fa fa-map-o me-2" />
+                  Websites
                 </h1>
               </div>
               <div className="col-sm-6">
@@ -148,18 +147,8 @@ const QuizSection = () => {
                   <li className="breadcrumb-item">
                     <Link to="/">Dashboard</Link>
                   </li>
-                  <li className="breadcrumb-item">
-                    <Link to="/courses">Courses</Link>
-                  </li>
-                  <li className="breadcrumb-item">
-                    <Link to={`/courses/${courseId}`}>Series</Link>
-                  </li>
-                  <li className="breadcrumb-item">
-                    <Link to={`/quiz/${courseId}/${courseSeriesId}`}>
-                      Quizzes
-                    </Link>
-                  </li>
-                  <li className="breadcrumb-item active">Sections</li>
+                  {/* <li className="breadcrumb-item">App</li> */}
+                  <li className="breadcrumb-item active">Websites</li>
                 </ol>
               </div>
             </div>
@@ -169,21 +158,19 @@ const QuizSection = () => {
                 <input
                   type="text"
                   className="form-control flex-grow-1"
-                  placeholder="Search for quiz section"
+                  placeholder="Search for Websites"
                   autoFocus={true}
                   value={searchTermFilter}
                   onChange={(e) => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
-                <ManageCourseModal
-                  fetchQuizSectionData={fetchQuizSectionData}
-                />
+                <ManageEventModal fetchEventData={fetchEventData} />
               </div>
-              <div className="card-body" style={{ overflow: 'auto' }}>
+              <div className="card-body" style={{ overflow: "auto" }}>
                 <table
                   className="table table-hover"
-                  style={{ minWidth: '840px' }}
+                  style={{ minWidth: "840px" }}
                 >
                   <thead className="table-light">
                     <tr>
@@ -191,37 +178,30 @@ const QuizSection = () => {
                       <th
                         scope="col"
                         className="w-100"
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('section_name');
+                          setSortingOn("event_title");
                         }}
                       >
-                        Name
+                        User Websites
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
                       <th
                         scope="col"
-                        style={{ cursor: 'pointer' }}
+                        className="w-100"
+                        style={{ cursor: "pointer" }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn('section_duration');
+                          setSortingOn("event_delivery_time");
                         }}
-                      >
-                        <div className="d-flex">
-                          Duration
-                          <i className="ms-2 fa fa-sort" aria-hidden="true" />
-                        </div>
-                      </th>
-
-                      {/* <th scope="col">Duration</th> */}
-                      <th scope="col">Questions</th>
+                      ></th>
                       <th scope="col">Manage</th>
                     </tr>
                   </thead>
                   <tbody className="table-group-divider">
                     <TableContent
-                      fetchQuizSectionData={fetchQuizSectionData}
+                      fetchEventData={fetchEventData}
                       paginatedData={paginatedData}
                       currentPage={currentPage}
                       rowsPerPage={rowsPerPage}
@@ -241,9 +221,9 @@ const QuizSection = () => {
                   type="text"
                   disabled={true}
                   className="form-control"
-                  style={{ width: '100px', textAlign: 'center' }}
+                  style={{ width: "100px", textAlign: "center" }}
                   value={`${currentPage}/${
-                    Math.ceil(quizSectionData.length / rowsPerPage) || 1
+                    Math.ceil(eventData.length / rowsPerPage) || 1
                   }`}
                   readOnly={true}
                 />
@@ -263,17 +243,14 @@ const QuizSection = () => {
   );
 };
 
-export default QuizSection;
+export default Event;
 
 const TableContent = ({
-  fetchQuizSectionData,
+  fetchEventData,
   paginatedData,
   currentPage,
   rowsPerPage,
 }) => {
-  const navigate = useNavigate();
-  const { courseId, courseSeriesId, quizId } = useParams();
-
   return (
     <>
       {paginatedData.length === 0 ? (
@@ -289,48 +266,26 @@ const TableContent = ({
               <th scope="row">
                 {currentPage * rowsPerPage - rowsPerPage + index + 1}
               </th>
-              <td>{data.section_name}</td>
-              <td>{data.section_duration} min</td>
+              <td>{data.website_name}</td>
               <td>
-                <button
-                  type="button"
-                  onClick={() =>
-                    navigate(
-                      `/quiz/${courseId}/${courseSeriesId}/${quizId}/${data._id}`
-                    )
-                  }
-                  className="btn btn-info py-0 d-flex align-items-center"
-                >
-                  <i
-                    className="fa fa-pencil-square-o me-1"
-                    aria-hidden="true"
-                  />{' '}
-                  {data.quiz_section_questions.length}
-                </button>
-              </td>
-              <td>
-                <ManageCourseModal
-                  data={data}
-                  fetchQuizSectionData={fetchQuizSectionData}
-                />
+                <ManageEventModal data={data} fetchEventData={fetchEventData} />
               </td>
             </tr>
           );
         })
       )}
+      ``
     </>
   );
 };
 
-const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
-  const { quizId } = useParams();
+const ManageEventModal = ({ data, fetchEventData }) => {
   const CloseButton = useRef();
   const { setIsLoading } = useStore();
   const initialLocalData = {
-    section_name: '',
-    section_description: '',
-    section_duration: 0,
-    questions_to_answer: 0,
+    website_name: "",
+    website_description: "",
+    website_url: "",
   };
 
   const [localData, setLocalData] = useState(initialLocalData);
@@ -341,77 +296,77 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
     setLocalData(data);
   }, [data]);
 
-  const handleAddQuizSection = async () => {
+  const handleAddEvent = async () => {
     try {
       setIsLoading(true);
-      await axios().post(`/api/v1/quizzes/section/${quizId}`, {
-        ...localData,
-      });
+      const res = await axios().post(`/api/v1/app/website`, localData);
       Toast.fire({
-        icon: 'success',
-        title: 'Quiz Section added',
+        icon: "success",
+        title: "Event added",
       });
-      fetchQuizSectionData();
       setLocalData(initialLocalData);
       CloseButton.current.click();
       setIsLoading(false);
     } catch (error) {
       console.log(error);
       Toast.fire({
-        icon: 'error',
+        icon: "error",
         title: error.response.data ? error.response.data.msg : error.message,
       });
       setIsLoading(false);
     }
   };
 
-  const handleUpdateQuizSection = async () => {
+  // image upload
+
+  const handleUpdateEvent = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/quizzes/section/${data._id}`, localData);
+      await axios().patch(`/api/v1/app/website/${data._id}`, localData);
       Toast.fire({
-        icon: 'success',
-        title: 'Quiz Section updated',
+        icon: "success",
+        title: "Event updated",
       });
-      fetchQuizSectionData();
+
+      fetchEventData();
       CloseButton.current.click();
       setIsLoading(false);
     } catch (error) {
       console.log(error);
       Toast.fire({
-        icon: 'error',
+        icon: "error",
         title: error.response.data ? error.response.data.msg : error.message,
       });
       setIsLoading(false);
     }
   };
 
-  const handleDeleteQuizSection = async () => {
+  const handleDeleteEvent = async () => {
     Swal.fire({
-      icon: 'warning',
-      title: 'Are you sure?',
-      html: '<h6>All Section question realted to this Section will also get permanently deleted</h6>',
+      icon: "warning",
+      title: "Are you sure?",
+      html: "<h6>This event will get permanently deleted</h6>",
       showCancelButton: true,
       confirmButtonText: `Delete`,
-      confirmButtonColor: '#D14343',
+      confirmButtonColor: "#D14343",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/quizzes/section/${data._id}`);
+          await axios().delete(`/api/v1/app/event/${data._id}`);
           Toast.fire({
-            icon: 'success',
-            title: 'Series Section deleted',
+            icon: "success",
+            title: "Event deleted",
           });
           setTimeout(function () {
-            fetchQuizSectionData();
+            fetchEventData();
           }, 500);
           CloseButton.current.click();
           setIsLoading(false);
         } catch (error) {
           console.log(error);
           Toast.fire({
-            icon: 'error',
+            icon: "error",
             title: error.response.data
               ? error.response.data.msg
               : error.message,
@@ -428,19 +383,19 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
         type="button"
         className="btn btn-dark ms-2 d-flex align-items-center"
         data-toggle="modal"
-        data-target={data ? `#${data._id}` : '#add-quiz-section-modal'}
+        data-target={data ? `#${data._id}` : "#add-event-modal"}
       >
         {data ? (
           <i className="fa fa-cog" aria-hidden="true" />
         ) : (
           <>
-            <i className="fa fa-plus me-1" aria-hidden="true" /> Section
+            <i className="fa fa-plus me-1" aria-hidden="true" /> Website
           </>
         )}
       </button>
       <div
         className="modal fade"
-        id={data ? data._id : 'add-quiz-section-modal'}
+        id={data ? data._id : "add-event-modal"}
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"
@@ -450,7 +405,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                {data ? <>Manage Section</> : <>Add Section</>}
+                {data ? <>Manage Websites</> : <>Details</>}
               </h5>
               <button
                 type="button"
@@ -463,72 +418,54 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
               </button>
             </div>
             <div className="modal-body">
-              <label htmlFor="section_name" className="form-label mt-2">
-                Section Name
+              <label htmlFor="event_title" className="form-label mt-2">
+                Website Name
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="section_name"
-                value={localData.section_name}
+                id="event_title"
+                value={localData.website_name}
                 onChange={(e) =>
                   setLocalData({
                     ...localData,
-                    section_name: e.target.value,
+                    website_name: e.target.value,
                   })
                 }
               />
-              <label htmlFor="section_description" className="form-label mt-2">
-                Section Description
+
+              <label htmlFor="event_description" className="form-label mt-2">
+                Website description
               </label>
               <textarea
                 type="text"
                 className="form-control"
-                id="section_description"
-                value={localData.section_description}
+                id="event_description"
+                value={localData.website_description}
                 onChange={(e) =>
                   setLocalData({
                     ...localData,
-                    section_description: e.target.value,
+                    website_description: e.target.value,
                   })
                 }
               />
-              <label htmlFor="section_duration" className="form-label mt-2">
-                Section Duration (in minutes)
-              </label>
-              <input
-                type="number"
-                className="form-control"
-                id="section_duration"
-                value={localData.section_duration}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    section_duration: Number(e.target.value),
-                  })
-                }
-              />
-              <label htmlFor="questions_to_answer" className="form-label mt-2">
-                Questions to answer
-              </label>
-              <input
-                type="number"
-                className="form-control"
-                id="questions_to_answer"
-                value={localData.questions_to_answer}
-                onChange={(e) =>
-                  setLocalData({
-                    ...localData,
-                    questions_to_answer: Number(e.target.value),
-                  })
-                }
-              />
-              <div className="form-text" id="basic-addon4">
-                Number of Questions answered by User to be evaluated for marking
-                (keep 0 to skip)
-              </div>
-            </div>
 
+              <label htmlFor="event_location_url" className="form-label mt-2">
+                Website URL
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="event_location_url"
+                value={localData.website_url}
+                onChange={(e) =>
+                  setLocalData({
+                    ...localData,
+                    website_url: e.target.value,
+                  })
+                }
+              />
+            </div>
             <div className="modal-footer">
               {data ? (
                 <>
@@ -536,7 +473,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
                   <button
                     type="button"
                     className="btn btn-danger me-auto"
-                    onClick={handleDeleteQuizSection}
+                    onClick={handleDeleteEvent}
                   >
                     Delete
                   </button>
@@ -550,7 +487,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleUpdateQuizSection}
+                    onClick={handleUpdateEvent}
                   >
                     Save changes
                   </button>
@@ -568,7 +505,7 @@ const ManageCourseModal = ({ data, fetchQuizSectionData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleAddQuizSection}
+                    onClick={handleAddEvent}
                   >
                     Add
                   </button>
