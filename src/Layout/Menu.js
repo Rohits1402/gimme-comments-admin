@@ -7,10 +7,8 @@ export default function Menu() {
   const navigate = useNavigate();
 
   const logOut = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("access_level");
-    setAccessToken(null);
-    navigate("/sign-in");
+    localStorage.removeItem("gimme_comment_access_token");
+    window.location.reload();
   };
 
   return (

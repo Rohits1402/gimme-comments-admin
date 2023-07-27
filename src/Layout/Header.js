@@ -1,17 +1,15 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useStore } from '../Contexts/StoreContext';
-import NavyaLogoMain from '../assets/NavyaLogoMain.png';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useStore } from "../Contexts/StoreContext";
+import NavyaLogoMain from "../assets/NavyaLogoMain.png";
 
 export default function Header() {
   const { setAccessToken } = useStore();
   const navigate = useNavigate();
 
   const logOut = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('access_level');
-    setAccessToken(null);
-    navigate('/sign-in');
+    localStorage.removeItem("gimme_comment_access_token");
+    window.location.reload();
   };
 
   return (
@@ -25,15 +23,15 @@ export default function Header() {
               href="#"
               role="button"
             >
-              <i className="fas fa-bars" style={{ color: '#775DA8' }} />
+              <i className="fas fa-bars" style={{ color: "#775DA8" }} />
             </div>
           </li>
         </ul>
         <img
           src={NavyaLogoMain}
           alt="logl"
-          style={{ height: '40px', cursor: 'pointer' }}
-          onClick={() => navigate('/')}
+          style={{ height: "40px", cursor: "pointer" }}
+          onClick={() => navigate("/")}
         />
         <ul className="navbar-nav">
           <li className="nav-item">
@@ -42,7 +40,7 @@ export default function Header() {
               role="button"
               onClick={() => window.location.reload()}
             >
-              <i className="fa fa-refresh" style={{ color: '#775DA8' }} />
+              <i className="fa fa-refresh" style={{ color: "#775DA8" }} />
             </div>
           </li>
           <li className="nav-item">
@@ -54,7 +52,7 @@ export default function Header() {
             >
               <i
                 className="fas fa-expand-arrows-alt"
-                style={{ color: '#775DA8' }}
+                style={{ color: "#775DA8" }}
               />
             </div>
           </li>
@@ -68,7 +66,7 @@ export default function Header() {
               onClick={() => logOut()}
             >
               {/* <i className="fas fa-th-large" /> */}
-              <i className="fas fa-sign-out-alt" style={{ color: '#775DA8' }} />
+              <i className="fas fa-sign-out-alt" style={{ color: "#775DA8" }} />
             </div>
           </li>
         </ul>

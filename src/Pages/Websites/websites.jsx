@@ -17,31 +17,28 @@ const Toast = Swal.mixin({
   },
 });
 
-const Event = () => {
+const Website = () => {
   const { setIsLoading } = useStore();
-  const [eventData, setEventData] = useState([]);
+  const [websiteData, setWebsiteData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
 
   const [searchTermFilter, setSearchTermFilter] = useState("");
-  const [sortingOn, setSortingOn] = useState("event_title");
+  const [sortingOn, setSortingOn] = useState("website_title");
   const [sortingMethod, setSortingMethod] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   // const [rowsPerPage, setRowsPerPage] = useState(20);
   const rowsPerPage = 20;
 
-  // getting banner data from database
-  const fetchEventData = async () => {
+  // getting website data from database
+  const fetchWebsiteData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios().get(`/api/v1/app/websites/`);
-      let events = response.data.events.map((d) => {
-        d.event_delivery_time = JsDateToString(d.event_delivery_time);
-        return d;
-      });
-      setEventData(events);
-      console.log(events);
+      const response = await axios().get(`/api/v1/websites`);
+
+      setWebsiteData(response.data.websites);
+      console.log(response.data.websites);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -54,21 +51,21 @@ const Event = () => {
   };
 
   useEffect(() => {
-    fetchEventData();
+    fetchWebsiteData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsLoading]);
 
   // FILTERING DATA IN ONE GO
   useEffect(() => {
     // filtering according to search term filter
-    const tempCourseCategoriesData = eventData;
+    const tempCourseCategoriesData = websiteData;
     const tempSearchTermFilterData = tempCourseCategoriesData.filter(
       (category) => {
         if (searchTermFilter === "") {
           return true;
         } else {
           if (
-            category["event_title"]
+            category["website_title"]
               .toLowerCase()
               .includes(searchTermFilter.toLowerCase())
           ) {
@@ -81,7 +78,7 @@ const Event = () => {
     );
 
     setFilteredData(tempSearchTermFilterData);
-  }, [eventData, searchTermFilter]);
+  }, [websiteData, searchTermFilter]);
 
   // sorting searchTermFilteredData according to sortingOn and sortingMethod
   useEffect(() => {
@@ -165,7 +162,7 @@ const Event = () => {
                     setSearchTermFilter(e.target.value);
                   }}
                 />
-                <ManageEventModal fetchEventData={fetchEventData} />
+                <ManageWebsiteModal fetchWebsiteData={fetchWebsiteData} />
               </div>
               <div className="card-body" style={{ overflow: "auto" }}>
                 <table
@@ -181,27 +178,19 @@ const Event = () => {
                         style={{ cursor: "pointer" }}
                         onClick={() => {
                           setSortingMethod(!sortingMethod);
-                          setSortingOn("event_title");
+                          setSortingOn("website_title");
                         }}
                       >
-                        User Websites
+                        Name
                         <i className="ms-2 fa fa-sort" aria-hidden="true" />
                       </th>
-                      <th
-                        scope="col"
-                        className="w-100"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setSortingMethod(!sortingMethod);
-                          setSortingOn("event_delivery_time");
-                        }}
-                      ></th>
+                      <th scope="col">Install</th>
                       <th scope="col">Manage</th>
                     </tr>
                   </thead>
                   <tbody className="table-group-divider">
                     <TableContent
-                      fetchEventData={fetchEventData}
+                      fetchWebsiteData={fetchWebsiteData}
                       paginatedData={paginatedData}
                       currentPage={currentPage}
                       rowsPerPage={rowsPerPage}
@@ -223,7 +212,7 @@ const Event = () => {
                   className="form-control"
                   style={{ width: "100px", textAlign: "center" }}
                   value={`${currentPage}/${
-                    Math.ceil(eventData.length / rowsPerPage) || 1
+                    Math.ceil(websiteData.length / rowsPerPage) || 1
                   }`}
                   readOnly={true}
                 />
@@ -243,10 +232,10 @@ const Event = () => {
   );
 };
 
-export default Event;
+export default Website;
 
 const TableContent = ({
-  fetchEventData,
+  fetchWebsiteData,
   paginatedData,
   currentPage,
   rowsPerPage,
@@ -268,7 +257,14 @@ const TableContent = ({
               </th>
               <td>{data.website_name}</td>
               <td>
-                <ManageEventModal data={data} fetchEventData={fetchEventData} />
+                <AddCodeModal data={data} fetchWebsiteData={fetchWebsiteData} />
+              </td>
+
+              <td>
+                <ManageWebsiteModal
+                  data={data}
+                  fetchWebsiteData={fetchWebsiteData}
+                />
               </td>
             </tr>
           );
@@ -279,7 +275,7 @@ const TableContent = ({
   );
 };
 
-const ManageEventModal = ({ data, fetchEventData }) => {
+const ManageWebsiteModal = ({ data, fetchWebsiteData }) => {
   const CloseButton = useRef();
   const { setIsLoading } = useStore();
   const initialLocalData = {
@@ -296,17 +292,18 @@ const ManageEventModal = ({ data, fetchEventData }) => {
     setLocalData(data);
   }, [data]);
 
-  const handleAddEvent = async () => {
+  const handleAddWebsite = async () => {
     try {
       setIsLoading(true);
-      const res = await axios().post(`/api/v1/app/website`, localData);
+      const res = await axios().post(`/api/v1/websites`, localData);
       Toast.fire({
         icon: "success",
-        title: "Event added",
+        title: "Website added",
       });
       setLocalData(initialLocalData);
       CloseButton.current.click();
       setIsLoading(false);
+      fetchWebsiteData();
     } catch (error) {
       console.log(error);
       Toast.fire({
@@ -319,16 +316,16 @@ const ManageEventModal = ({ data, fetchEventData }) => {
 
   // image upload
 
-  const handleUpdateEvent = async () => {
+  const handleUpdateWebsite = async () => {
     try {
       setIsLoading(true);
-      await axios().patch(`/api/v1/app/website/${data._id}`, localData);
+      await axios().patch(`/api/v1/websites/${data._id}`, localData);
       Toast.fire({
         icon: "success",
-        title: "Event updated",
+        title: "Website updated",
       });
 
-      fetchEventData();
+      fetchWebsiteData();
       CloseButton.current.click();
       setIsLoading(false);
     } catch (error) {
@@ -341,11 +338,11 @@ const ManageEventModal = ({ data, fetchEventData }) => {
     }
   };
 
-  const handleDeleteEvent = async () => {
+  const handleDeleteWebsite = async () => {
     Swal.fire({
       icon: "warning",
       title: "Are you sure?",
-      html: "<h6>This event will get permanently deleted</h6>",
+      html: "<h6>This website will get permanently deleted</h6>",
       showCancelButton: true,
       confirmButtonText: `Delete`,
       confirmButtonColor: "#D14343",
@@ -353,13 +350,13 @@ const ManageEventModal = ({ data, fetchEventData }) => {
       if (result.isConfirmed) {
         try {
           setIsLoading(true);
-          await axios().delete(`/api/v1/app/event/${data._id}`);
+          await axios().delete(`/api/v1/websites/${data._id}`);
           Toast.fire({
             icon: "success",
-            title: "Event deleted",
+            title: "Website deleted",
           });
           setTimeout(function () {
-            fetchEventData();
+            fetchWebsiteData();
           }, 500);
           CloseButton.current.click();
           setIsLoading(false);
@@ -383,10 +380,12 @@ const ManageEventModal = ({ data, fetchEventData }) => {
         type="button"
         className="btn btn-dark ms-2 d-flex align-items-center"
         data-toggle="modal"
-        data-target={data ? `#${data._id}` : "#add-event-modal"}
+        data-target={data ? `#${data._id}` : "#add-website-modal"}
       >
         {data ? (
-          <i className="fa fa-cog" aria-hidden="true" />
+          <>
+            <i className="fa fa-cog" aria-hidden="true" />
+          </>
         ) : (
           <>
             <i className="fa fa-plus me-1" aria-hidden="true" /> Website
@@ -395,7 +394,7 @@ const ManageEventModal = ({ data, fetchEventData }) => {
       </button>
       <div
         className="modal fade"
-        id={data ? data._id : "add-event-modal"}
+        id={data ? data._id : "add-website-modal"}
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"
@@ -418,13 +417,13 @@ const ManageEventModal = ({ data, fetchEventData }) => {
               </button>
             </div>
             <div className="modal-body">
-              <label htmlFor="event_title" className="form-label mt-2">
+              <label htmlFor="website_title" className="form-label mt-2">
                 Website Name
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="event_title"
+                id="website_title"
                 value={localData.website_name}
                 onChange={(e) =>
                   setLocalData({
@@ -434,13 +433,13 @@ const ManageEventModal = ({ data, fetchEventData }) => {
                 }
               />
 
-              <label htmlFor="event_description" className="form-label mt-2">
+              <label htmlFor="website_description" className="form-label mt-2">
                 Website description
               </label>
               <textarea
                 type="text"
                 className="form-control"
-                id="event_description"
+                id="website_description"
                 value={localData.website_description}
                 onChange={(e) =>
                   setLocalData({
@@ -450,13 +449,13 @@ const ManageEventModal = ({ data, fetchEventData }) => {
                 }
               />
 
-              <label htmlFor="event_location_url" className="form-label mt-2">
+              <label htmlFor="website_location_url" className="form-label mt-2">
                 Website URL
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="event_location_url"
+                id="website_location_url"
                 value={localData.website_url}
                 onChange={(e) =>
                   setLocalData({
@@ -473,7 +472,7 @@ const ManageEventModal = ({ data, fetchEventData }) => {
                   <button
                     type="button"
                     className="btn btn-danger me-auto"
-                    onClick={handleDeleteEvent}
+                    onClick={handleDeleteWebsite}
                   >
                     Delete
                   </button>
@@ -487,7 +486,7 @@ const ManageEventModal = ({ data, fetchEventData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleUpdateEvent}
+                    onClick={handleUpdateWebsite}
                   >
                     Save changes
                   </button>
@@ -505,9 +504,99 @@ const ManageEventModal = ({ data, fetchEventData }) => {
                   <button
                     type="button"
                     className="btn btn-success"
-                    onClick={handleAddEvent}
+                    onClick={handleAddWebsite}
                   >
                     Add
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+const AddCodeModal = ({ data, fetchWebsiteData }) => {
+  const CloseButton = useRef();
+
+  return (
+    <>
+      <button
+        type="button"
+        className="btn btn-dark ms-2 d-flex align-items-center"
+        data-toggle="modal"
+        data-target={data ? `#${data._id}` : "#add-website-modal"}
+      >
+        {data ? (
+          <>
+            <i class="fa fa-cloud-download" aria-hidden="true"></i>
+          </>
+        ) : (
+          <>
+            <i className="fa fa-plus me-1" aria-hidden="true" /> Website
+          </>
+        )}
+      </button>
+      <div
+        className="modal fade"
+        id={data ? data._id : "add-website-modal"}
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                <>Add This Code</>
+              </h5>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                ref={CloseButton}
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <label htmlFor="website_title" className="form-label mt-2">
+                HTML Code
+              </label>
+              <textarea
+                rows={4}
+                type="text"
+                className="form-control"
+                id="website_description"
+                value="abc"
+              />
+            </div>
+            <div className="modal-footer">
+              {data ? (
+                <>
+                  {/* Manage */}
+
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Add New */}
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
                   </button>
                 </>
               )}
