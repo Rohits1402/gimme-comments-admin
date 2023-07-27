@@ -1,16 +1,16 @@
-import { HashRouter } from 'react-router-dom';
-import Routing from './Routes/Routing';
-import { StoreProvider } from './Contexts/StoreContext';
-import './App.css';
+import { BrowserRouter } from 'react-router-dom'
+import Routing from './Routes/Routing'
+import { StoreProvider } from './Contexts/StoreContext'
+import './App.css'
 
 function App() {
   return (
     <StoreProvider>
-      <HashRouter>
+      <BrowserRouter>
         <Routing />
-      </HashRouter>
+      </BrowserRouter>
     </StoreProvider>
-  );
+  )
 }
 
-export default App;
+export default App

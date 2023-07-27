@@ -1,17 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import axios from '../../Utils/axios';
-import loginPageSigeImg from '../../assets/loginPageSigeImg.png';
-import { useStore } from '../../Contexts/StoreContext';
-
-import { auth } from '../../Utils/firebaseConfig';
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signOut,
-} from 'firebase/auth';
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import axios from '../../Utils/axios'
+import loginPageSigeImg from '../../assets/loginPageSigeImg.png'
+import { useStore } from '../../Contexts/StoreContext'
 
 const Toast = Swal.mixin({
   toast: true,
@@ -20,138 +12,81 @@ const Toast = Swal.mixin({
   timer: 3000,
   timerProgressBar: true,
   didOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer);
-    toast.addEventListener('mouseleave', Swal.resumeTimer);
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
   },
-});
+})
 
 export default function SignIn() {
-  const googleAuthProvider = new GoogleAuthProvider();
-  const facebookAuthProvider = new FacebookAuthProvider();
-
-  const { accessToken, setIsLoading } = useStore();
+  const { accessToken, setIsLoading } = useStore()
   const [userData, setUserData] = useState({
     email: '',
     phone_no: '',
     country_code: '',
     password: '',
-  });
-  const [emailLogin, setEmailLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-  let navigate = useNavigate();
+  })
+  const [emailLogin, setEmailLogin] = useState(true)
+  const [showPassword, setShowPassword] = useState(false)
+  let navigate = useNavigate()
 
   useEffect(() => {
     // Check if is Logged in
-    if (accessToken) navigate('/');
-  }, [accessToken, navigate]);
+    if (accessToken) navigate('/')
+  }, [accessToken, navigate])
 
   const signUserIn = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (emailLogin && userData.email === '')
-      return Toast.fire({ icon: 'error', title: 'Email required' });
+      return Toast.fire({ icon: 'error', title: 'Email required' })
     if (!emailLogin && userData.phone_no === '')
-      return Toast.fire({ icon: 'error', title: 'Phone No required' });
+      return Toast.fire({ icon: 'error', title: 'Phone No required' })
     if (userData.password === '')
-      return Toast.fire({ icon: 'error', title: 'Password required' });
+      return Toast.fire({ icon: 'error', title: 'Password required' })
 
     const params = {
       password: userData.password,
-    };
-
-    if (emailLogin) {
-      params.email = userData.email;
-    } else {
-      params.phone_no = Number(userData.phone_no);
-      params.country_code = Number(userData.country_code);
     }
 
-    setIsLoading(true);
+    if (emailLogin) {
+      params.email = userData.email
+    } else {
+      params.phone_no = Number(userData.phone_no)
+      params.country_code = Number(userData.country_code)
+    }
+
+    setIsLoading(true)
 
     try {
       const res = await axios().post(
         process.env.REACT_APP_BASE_URL + '/api/v1/auth/login',
-        params
-      );
+        params,
+      )
       Toast.fire({
         icon: 'success',
         title: 'Logged In',
-      });
-      setIsLoading(false);
+      })
+      setIsLoading(false)
 
       if (!(res.data.role === 'admin' || res.data.role === 'teacher')) {
         Toast.fire({
           icon: 'error',
           title: 'Invalid Credentials',
-        });
-        return;
+        })
+        return
       }
 
-      localStorage.setItem('access_token', res.data.token);
-      localStorage.setItem('access_level', res.data.role);
-      window.location.reload();
+      localStorage.setItem('access_token', res.data.token)
+      localStorage.setItem('access_level', res.data.role)
+      window.location.reload()
     } catch (err) {
-      console.log(err);
+      console.log(err)
       Toast.fire({
         icon: 'error',
         title: err.response.data?.msg || err.message,
-      });
-      setIsLoading(false);
+      })
+      setIsLoading(false)
     }
-  };
-
-  const handleLoginWithSocialAccount = async (e, provider) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      let res;
-      if (provider === 'google') {
-        res = await signInWithPopup(auth, googleAuthProvider);
-        await signOut(auth);
-
-        const response = await axios().post(
-          process.env.REACT_APP_BASE_URL + '/api/v1/auth/social/login',
-          {
-            provider: 'google',
-            google_login_uid: res.user.uid,
-          }
-        );
-
-        console.log(response);
-
-        localStorage.setItem('access_token', response.data.token);
-        localStorage.setItem('access_level', response.data.role);
-        window.location.reload();
-      } else if (provider === 'facebook') {
-        res = await signInWithPopup(auth, facebookAuthProvider);
-        await signOut(auth);
-
-        const response = await axios().post(
-          process.env.REACT_APP_BASE_URL + '/api/v1/auth/social/login',
-          {
-            provider: 'facebook',
-            facebook_login_uid: res.user.uid,
-          }
-        );
-
-        console.log(response);
-
-        localStorage.setItem('access_token', response.data.token);
-        localStorage.setItem('access_level', response.data.role);
-        window.location.reload();
-      } else {
-        Toast.fire({ icon: 'success', title: 'Please provide valid provider' });
-      }
-
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      Toast.fire({
-        icon: 'error',
-        title: error.response.data ? error.response.data.msg : error.message,
-      });
-      setIsLoading(false);
-    }
-  };
+  }
 
   return (
     <>
@@ -303,29 +238,15 @@ export default function SignIn() {
             >
               Sign in
             </button>
-            <button
-              type="submit"
-              className="btn btn-light w-100 my-2"
-              onClick={(e) => handleLoginWithSocialAccount(e, 'google')}
-            >
-              Google Login
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary w-100"
-              onClick={(e) => handleLoginWithSocialAccount(e, 'facebook')}
-            >
-              Facebook Login
-            </button>
           </form>
         </div>
       </div>
     </>
-  );
+  )
 }
 
 const imgStyle = {
   height: '100%',
   width: '50%',
   objectFit: 'cover',
-};
+}
