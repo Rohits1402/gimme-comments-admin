@@ -572,7 +572,7 @@ const AddCodeModal = ({ data }) => {
                   className="btn btn-light text-bold"
                   onClick={() => {
                     navigator.clipboard.writeText(`
-                  <div id="gimme-comments-root" data-gimme_comments_website_id="${data._id}"></div><script src="http://153.92.210.82:6969/initialize-gimme-comments.js">`);
+                  <div id="gimme-comments-root" data-gimme_comments_website_id="${data._id}"></div><script src="http://153.92.210.82:6969/initialize-gimme-comments.js"></script>`);
                     Toast.fire({
                       icon: "success",
                       title: "Code copied",
@@ -591,7 +591,7 @@ const AddCodeModal = ({ data }) => {
                   "&gt;&lt;/div&gt;
                   {"\n"}
                   &lt;script
-                  src="http://153.92.210.82:6969/initialize-gimme-comments.js"&gt;
+                  src="http://153.92.210.82:6969/initialize-gimme-comments.js"&gt;&lt;/script&gt;
                   {"\n"}
                 </code>
               </pre>
