@@ -13,8 +13,6 @@ import VerifyAccount from '../Pages/Auth/VerifyAccount/VerifyAccount'
 import ForgetPassword from '../Pages/Auth/ForgetPassword/ForgetPassword'
 import Websites from '..//Pages/Websites/websites'
 
-import Dashboard from '../Pages/Dashboard/Dashboard'
-
 import Profile from '../Pages/Profile/Profile'
 import Customers from '../Pages/Customers/Customers'
 import CustomerProfile from '../Pages/Customers/CustomerProfile'
