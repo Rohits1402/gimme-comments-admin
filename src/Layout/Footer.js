@@ -1,8 +1,9 @@
-import React from 'react';
-import { useStore } from '../Contexts/StoreContext';
+import React from 'react'
+import { useStore } from '../Contexts/StoreContext'
 
 export default function Footer() {
-  const { accessLevel } = useStore();
+  const { accessLevel } = useStore()
+  console.log(accessLevel)
   return (
     <>
       <footer className="main-footer">
@@ -15,5 +16,5 @@ export default function Footer() {
         </div>
       </footer>
     </>
-  );
+  )
 }
