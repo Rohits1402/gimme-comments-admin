@@ -1,11 +1,7 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useStore } from "../Contexts/StoreContext";
+import { Link } from "react-router-dom";
 
 export default function Menu() {
-  const { setAccessToken, accessLevel } = useStore();
-  const navigate = useNavigate();
-
   const logOut = () => {
     localStorage.removeItem("gimme_comment_access_token");
     window.location.reload();
@@ -40,13 +36,6 @@ export default function Menu() {
               role="menu"
               data-accordion="false"
             >
-              <li className="nav-item">
-                <Link to="/" className={`nav-link `}>
-                  <i className="nav-icon fas fa-th" />
-                  <p>Dashboard</p>
-                </Link>
-              </li>
-
               <>
                 <li className="nav-item">
                   <Link to="/websites" className={`nav-link `}>

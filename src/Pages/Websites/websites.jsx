@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "../../Utils/axios";
 import { useStore } from "../../Contexts/StoreContext";
-import { JsDateToString, FormDateToJs } from "../../Utils/dateEditor";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -257,7 +256,7 @@ const TableContent = ({
               </th>
               <td>{data.website_name}</td>
               <td>
-                <AddCodeModal data={data} fetchWebsiteData={fetchWebsiteData} />
+                <AddCodeModal data={data} />
               </td>
 
               <td>
@@ -294,7 +293,6 @@ const ManageWebsiteModal = ({ data, fetchWebsiteData }) => {
   const handleAddWebsite = async () => {
     try {
       setIsLoading(true);
-      const res = await axios().post(`/api/v1/websites`, localData);
       Toast.fire({
         icon: "success",
         title: "Website added",
@@ -517,16 +515,16 @@ const ManageWebsiteModal = ({ data, fetchWebsiteData }) => {
   );
 };
 
-const AddCodeModal = ({ data, fetchWebsiteData }) => {
+const AddCodeModal = ({ data }) => {
   const CloseButton = useRef();
 
   return (
     <>
       <button
         type="button"
-        className="btn btn-dark ms-2 d-flex align-items-center"
+        className="btn btn-info ms-2 d-flex align-items-center"
         data-toggle="modal"
-        data-target="#install-website-modal"
+        data-target={`#${data._id}-install-website-modal`}
       >
         {data ? (
           <>
@@ -540,17 +538,17 @@ const AddCodeModal = ({ data, fetchWebsiteData }) => {
       </button>
       <div
         className="modal fade"
-        id="install-website-modal"
+        id={`${data._id}-install-website-modal`}
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog" role="document">
+        <div className="modal-dialog modal-lg" role="document">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                <>Add This Code</>
+                Insallation
               </h5>
               <button
                 type="button"
@@ -563,16 +561,40 @@ const AddCodeModal = ({ data, fetchWebsiteData }) => {
               </button>
             </div>
             <div className="modal-body">
+              <ul>
+                <li>
+                  Add the HTML code in your website where you want to load Gimme
+                  Comments comment section.
+                </li>
+              </ul>
               <label htmlFor="website_title" className="form-label mt-2">
-                HTML Code
+                <button
+                  className="btn btn-light text-bold"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`
+                  <div id="gimme-comments-root" data-gimme_comments_website_id="${data._id}"></div><script src="http://153.92.210.82:6969/initialize-gimme-comments.js">`);
+                    Toast.fire({
+                      icon: "success",
+                      title: "Code copied",
+                    });
+                  }}
+                >
+                  HTML Code
+                  <i className="fa fa-files-o ms-2" aria-hidden="true" />
+                </button>
               </label>
-              <textarea
-                rows={4}
-                type="text"
-                className="form-control"
-                id="website_description"
-                value="abc"
-              />
+
+              <pre className="bg-dark p-2 border rounded-2">
+                <code>
+                  &lt;div id="gimme-comments-root"
+                  data-gimme_comments_website_id="{data._id}
+                  "&gt;&lt;/div&gt;
+                  {"\n"}
+                  &lt;script
+                  src="http://153.92.210.82:6969/initialize-gimme-comments.js"&gt;
+                  {"\n"}
+                </code>
+              </pre>
             </div>
             <div className="modal-footer">
               {data ? (
