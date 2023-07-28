@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "../../Utils/axios";
@@ -6,6 +7,16 @@ import { useParams } from "react-router-dom";
 
 import InfoNavTab from "./InfoNavTab";
 import SettingsNavTab from "./SettingsNavTab";
+=======
+import React, { useState, useEffect } from 'react'
+import Swal from 'sweetalert2'
+import axios from '../../Utils/axios'
+import { useStore } from '../../Contexts/StoreContext'
+import { useParams } from 'react-router-dom'
+
+import InfoNavTab from './InfoNavTab'
+import SettingsNavTab from './SettingsNavTab'
+>>>>>>> ae89a297f8e86e002419531aa6c220d396a88a8c
 
 const Toast = Swal.mixin({
   toast: true,
@@ -14,18 +25,28 @@ const Toast = Swal.mixin({
   timer: 3000,
   timerProgressBar: true,
   didOpen: (toast) => {
+<<<<<<< HEAD
     toast.addEventListener("mouseenter", Swal.stopTimer);
     toast.addEventListener("mouseleave", Swal.resumeTimer);
+=======
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+>>>>>>> ae89a297f8e86e002419531aa6c220d396a88a8c
   },
-});
+})
 
 const default_profile_image =
+<<<<<<< HEAD
   "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png";
+=======
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png'
+>>>>>>> ae89a297f8e86e002419531aa6c220d396a88a8c
 
 const ProfileComponent = () => {
-  const { userId } = useParams();
-  const { setIsLoading } = useStore();
+  const { userId } = useParams()
+  const { setIsLoading } = useStore()
   const [userData, setUserData] = useState({
+<<<<<<< HEAD
     profile_image: "",
     name: "",
     gender: "",
@@ -37,47 +58,72 @@ const ProfileComponent = () => {
     account_active: "",
   });
   const [currUserId, setCurrUserId] = useState("");
+=======
+    profile_image: '',
+    name: '',
+    gender: '',
+    birthday: '',
+    email: '',
+    phone_no: '',
+    email_verified: '',
+    phone_no_verified: '',
+    account_active: '',
+  })
+  const [currUserId, setCurrUserId] = useState('')
+>>>>>>> ae89a297f8e86e002419531aa6c220d396a88a8c
 
   useEffect(() => {
     if (userId) {
-      setCurrUserId(userId);
+      setCurrUserId(userId)
     } else {
+<<<<<<< HEAD
       setCurrUserId("admin");
+=======
+      setCurrUserId('admin')
+>>>>>>> ae89a297f8e86e002419531aa6c220d396a88a8c
     }
-  }, [userId]);
+  }, [userId])
 
-  const [navTab, setNavTab] = useState(1);
+  const [navTab, setNavTab] = useState(1)
 
   const fetchProfileData = async () => {
+<<<<<<< HEAD
     if (currUserId === "") return;
     try {
       const response = await axios().get(`/api/v1/auth/profile/${currUserId}`);
+=======
+    if (currUserId === '') return
+    try {
+      const response = await axios().get(
+        `/api/v1/auth/admin/profile/${currUserId}`,
+      )
+>>>>>>> ae89a297f8e86e002419531aa6c220d396a88a8c
 
-      setUserData(response.data.user);
-      console.log(response.data.user);
-      setIsLoading(false);
+      setUserData(response.data.user)
+      console.log(response.data.user)
+      setIsLoading(false)
     } catch (error) {
-      console.log(error);
+      console.log(error)
       if (error.response.status === 404) {
         Toast.fire({
           icon: "error",
           title: `No user found with id ${userId}`,
-        });
+        })
       } else {
         Toast.fire({
           icon: "error",
           title: error.response.data ? error.response.data.msg : error.message,
-        });
+        })
       }
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchProfileData();
+    setIsLoading(true)
+    fetchProfileData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currUserId]);
+  }, [currUserId])
 
   return (
     <>
@@ -143,7 +189,7 @@ const ProfileComponent = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ProfileComponent;
+export default ProfileComponent
