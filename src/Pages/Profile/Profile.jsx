@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import ProfileComponent from '../../Components/ProfileComponent/ProfileComponent';
+import React from "react";
+import { Link } from "react-router-dom";
+import ProfileComponent from "../../Components/ProfileComponent/ProfileComponent";
 
 const Profile = () => {
   return (
@@ -18,13 +18,13 @@ const Profile = () => {
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
                   <li className="breadcrumb-item">
-                    <Link to="/">Dashboard</Link>
+                    <Link to="/websites">Websites</Link>
                   </li>
                   <li className="breadcrumb-item active">Profile</li>
                 </ol>
               </div>
             </div>
-            <ProfileComponent profileOf="admin" />
+            <ProfileComponent />
           </div>
         </div>
       </div>

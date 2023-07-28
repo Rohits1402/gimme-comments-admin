@@ -14,8 +14,6 @@ import ForgetPassword from '../Pages/Auth/ForgetPassword/ForgetPassword'
 import Websites from '..//Pages/Websites/websites'
 
 import Profile from '../Pages/Profile/Profile'
-import Customers from '../Pages/Customers/Customers'
-import CustomerProfile from '../Pages/Customers/CustomerProfile'
 
 export default function Routing() {
   const { isLoading, setIsLoading } = useStore()
@@ -72,10 +70,6 @@ export default function Routing() {
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/websites" element={<Websites />} />
-
-          {/* Customers */}
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/customers/:userId" element={<CustomerProfile />} />
 
           {/* will manage all questions inside one quiz section */}
         </Route>
