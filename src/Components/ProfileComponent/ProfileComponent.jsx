@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import axios from '../../Utils/axios';
-import { useStore } from '../../Contexts/StoreContext';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import Swal from 'sweetalert2'
+import axios from '../../Utils/axios'
+import { useStore } from '../../Contexts/StoreContext'
+import { useParams } from 'react-router-dom'
 
-import InfoNavTab from './InfoNavTab';
-import SettingsNavTab from './SettingsNavTab';
+import InfoNavTab from './InfoNavTab'
+import SettingsNavTab from './SettingsNavTab'
 
 const Toast = Swal.mixin({
   toast: true,
@@ -14,17 +14,17 @@ const Toast = Swal.mixin({
   timer: 3000,
   timerProgressBar: true,
   didOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer);
-    toast.addEventListener('mouseleave', Swal.resumeTimer);
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
   },
-});
+})
 
 const default_profile_image =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png';
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png'
 
 const ProfileComponent = () => {
-  const { userId } = useParams();
-  const { setIsLoading } = useStore();
+  const { userId } = useParams()
+  const { setIsLoading } = useStore()
   const [userData, setUserData] = useState({
     profile_image: '',
     name: '',
@@ -35,51 +35,51 @@ const ProfileComponent = () => {
     email_verified: '',
     phone_no_verified: '',
     account_active: '',
-  });
-  const [currUserId, setCurrUserId] = useState('');
+  })
+  const [currUserId, setCurrUserId] = useState('')
 
   useEffect(() => {
     if (userId) {
-      setCurrUserId(userId);
+      setCurrUserId(userId)
     } else {
-      setCurrUserId('admin');
+      setCurrUserId('admin')
     }
-  }, [userId]);
+  }, [userId])
 
-  const [navTab, setNavTab] = useState(1);
+  const [navTab, setNavTab] = useState(1)
 
   const fetchProfileData = async () => {
-    if (currUserId === '') return;
+    if (currUserId === '') return
     try {
       const response = await axios().get(
-        `/api/v1/auth/admin/profile/${currUserId}`
-      );
+        `/api/v1/auth/admin/profile/${currUserId}`,
+      )
 
-      setUserData(response.data.user);
-      console.log(response.data.user);
-      setIsLoading(false);
+      setUserData(response.data.user)
+      console.log(response.data.user)
+      setIsLoading(false)
     } catch (error) {
-      console.log(error);
+      console.log(error)
       if (error.response.status === 404) {
         Toast.fire({
           icon: 'error',
           title: `No user found with id ${userId}`,
-        });
+        })
       } else {
         Toast.fire({
           icon: 'error',
           title: error.response.data ? error.response.data.msg : error.message,
-        });
+        })
       }
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchProfileData();
+    setIsLoading(true)
+    fetchProfileData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currUserId]);
+  }, [currUserId])
 
   return (
     <>
@@ -145,7 +145,7 @@ const ProfileComponent = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ProfileComponent;
+export default ProfileComponent
