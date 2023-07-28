@@ -527,7 +527,7 @@ const AddCodeModal = ({ data, fetchWebsiteData }) => {
         type="button"
         className="btn btn-dark ms-2 d-flex align-items-center"
         data-toggle="modal"
-        data-target={data ? `#${data._id}` : "#add-website-modal"}
+        data-target="#install-website-modal"
       >
         {data ? (
           <>
@@ -541,7 +541,7 @@ const AddCodeModal = ({ data, fetchWebsiteData }) => {
       </button>
       <div
         className="modal fade"
-        id={data ? data._id : "add-website-modal"}
+        id="install-website-modal"
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"

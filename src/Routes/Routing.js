@@ -13,21 +13,7 @@ import VerifyAccount from "../Pages/Auth/VerifyAccount/VerifyAccount";
 import ForgetPassword from "../Pages/Auth/ForgetPassword/ForgetPassword";
 import Websites from "..//Pages/Websites/websites";
 
-import Dashboard from "../Pages/Dashboard/Dashboard";
-
-import AppFeedback from "../Pages/App/Feedback";
-import AppWelcomeScreen from "../Pages/App/WelcomeScreen";
-import AppNotification from "../Pages/App/Notification";
-import AppAboutUs from "../Pages/App/AboutUs";
-import AppContactUs from "../Pages/App/ContactUs";
-import AppFAQ from "../Pages/App/FAQ";
-import AppHelp from "../Pages/App/Help";
-import AppPrivacyPolicy from "../Pages/App/PrivacyPolicy";
-import AppTermsAndCondition from "../Pages/App/TermsAndCondition";
-
 import Profile from "../Pages/Profile/Profile";
-import Customers from "../Pages/Customers/Customers";
-import CustomerProfile from "../Pages/Customers/CustomerProfile";
 
 export default function Routing() {
   const { isLoading, setIsLoading } = useStore();
@@ -86,10 +72,6 @@ export default function Routing() {
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/websites" element={<Websites />} />
-
-          {/* Customers */}
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/customers/:userId" element={<CustomerProfile />} />
 
           {/* will manage all questions inside one quiz section */}
         </Route>

@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import ProfileComponent from '../../Components/ProfileComponent/ProfileComponent';
+import React from "react";
+import { Link } from "react-router-dom";
+import ProfileComponent from "../../Components/ProfileComponent/ProfileComponent";
 
 const Profile = () => {
   return (
