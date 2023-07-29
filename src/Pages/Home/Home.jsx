@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import gimmecomments_logo from '../../assets/gimmecomments_logo.png'
+import HomeImage from '../../assets/My project-1.png'
 const access_token = localStorage.getItem('gimme_comment_access_token')
 
 const Home = () => {
@@ -24,7 +25,7 @@ const Home = () => {
     <>
       {/* Navbar  */}
       <nav className="navbar navbar-light bg-light">
-        <div className="container">
+        <div className="container ">
           <a href="/" className="navbar-brand font-weight-bold">
             <img
               src={gimmecomments_logo}
@@ -46,11 +47,16 @@ const Home = () => {
       </nav>
 
       {/* Body  */}
+      <img
+        src={HomeImage}
+        alt="home"
+        style={{ maxHeight: '80vh', width: '100%', objectFit: 'cover' }}
+      />
 
       <div className="container text-center mt-5 ">
         <h1 className="font-weight-bold">Welcome to Gimme Comments</h1>
 
-        <div className="container mt-5 ">
+        <div className="container p-3 rounded-3 bg-light text-dark">
           GimmeComments is an innovative and cutting-edge web application that
           revolutionizes the way developers incorporate comments into their
           projects. With a sleek and user-friendly interface, GimmeComments aims
@@ -73,5 +79,4 @@ const Home = () => {
   )
 }
 
-
-export default Home;
+export default Home

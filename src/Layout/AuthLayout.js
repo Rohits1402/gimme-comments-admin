@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 
-import loginPageImg from '../assets/loginPageImg.png'
+import loginPage from '../assets/loginPage.png'
 
 export default function AuthLayout() {
   return (
@@ -11,7 +11,7 @@ export default function AuthLayout() {
         className="d-flex row m-0"
       >
         <img
-          src={loginPageImg}
+          src={loginPage}
           alt="logo"
           style={imgStyle}
           className=" d-none col-md-6 d-md-block"

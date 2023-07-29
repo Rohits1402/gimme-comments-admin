@@ -1,82 +1,82 @@
-import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import axios from "../../Utils/axios";
+import React, { useState } from 'react'
+import Swal from 'sweetalert2'
+import axios from '../../Utils/axios'
 
 const Toast = Swal.mixin({
   toast: true,
-  position: "top-end",
+  position: 'top-end',
   showConfirmButton: false,
   timer: 3000,
   timerProgressBar: true,
   didOpen: (toast) => {
-    toast.addEventListener("mouseenter", Swal.stopTimer);
-    toast.addEventListener("mouseleave", Swal.resumeTimer);
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
   },
-});
+})
 
 const SettingsNavTab = ({ userData, setIsLoading, fetchProfileData }) => {
   const [passwordData, setPasswordData] = useState({
-    old_password: "",
-    new_password: "",
-    new_password_confirm: "",
-  });
+    old_password: '',
+    new_password: '',
+    new_password_confirm: '',
+  })
 
   const updatePassword = async () => {
-    const { old_password, new_password, new_password_confirm } = passwordData;
+    const { old_password, new_password, new_password_confirm } = passwordData
 
     if (new_password !== new_password_confirm) {
-      Toast.fire({ icon: "warning", title: "New password should match" });
-      return;
+      Toast.fire({ icon: 'warning', title: 'New password should match' })
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const response = await axios().patch(
-        "/api/v1/auth/profile/update-password",
-        { old_password, new_password }
-      );
-      setIsLoading(false);
-      Toast.fire({ icon: "success", title: response.data.msg });
+        '/api/v1/auth/profile/update-password',
+        { old_password, new_password },
+      )
+      setIsLoading(false)
+      Toast.fire({ icon: 'success', title: response.data.msg })
     } catch (error) {
-      console.log(error);
+      console.log(error)
       Toast.fire({
-        icon: "error",
+        icon: 'error',
         title: error.response.data ? error.response.data.msg : error.message,
-      });
-      setIsLoading(false);
+      })
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleAccountDelete = () => {
     Swal.fire({
-      icon: "warning",
-      title: "Are you sure?",
-      html: "<h5>This account will be deleted</h5>",
+      icon: 'warning',
+      title: 'Are you sure?',
+      html: '<h5>This account will be deleted</h5>',
       showCancelButton: true,
       confirmButtonText: `Delete`,
-      confirmButtonColor: "#D14343",
+      confirmButtonColor: '#D14343',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        setIsLoading(true);
+        setIsLoading(true)
         try {
           const response = await axios().patch(
-            "/api/v1/auth/profile/delete-profile"
-          );
-          setIsLoading(false);
-          Toast.fire({ icon: "success", title: response.data.msg });
+            '/api/v1/auth/profile/delete-profile',
+          )
+          setIsLoading(false)
+          Toast.fire({ icon: 'success', title: response.data.msg })
         } catch (error) {
-          console.log(error);
+          console.log(error)
           Toast.fire({
-            icon: "error",
+            icon: 'error',
             title: error.response.data
               ? error.response.data.msg
               : error.message,
-          });
-          setIsLoading(false);
+          })
+          setIsLoading(false)
         }
       }
-    });
-  };
+    })
+  }
 
   return (
     <>
@@ -177,7 +177,7 @@ const SettingsNavTab = ({ userData, setIsLoading, fetchProfileData }) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SettingsNavTab;
+export default SettingsNavTab
