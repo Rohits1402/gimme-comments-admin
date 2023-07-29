@@ -28,7 +28,7 @@ export default function Header() {
         <img
           src={gimmecomments_logo}
           alt="logo"
-          style={{ height: '100px', cursor: 'pointer' }}
+          style={{ height: '50px', cursor: 'pointer' }}
           onClick={() => navigate('/')}
         />
         <ul className="navbar-nav">
