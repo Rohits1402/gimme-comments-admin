@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// import gimmecomments_logo from '../../assets/gimmecomments_logo.png'
+import gimmecomments_logo from '../../assets/gimmecomments_logo.png'
 const access_token = localStorage.getItem('gimme_comment_access_token')
 
 const Home = () => {
@@ -25,8 +25,12 @@ const Home = () => {
       {/* Navbar  */}
       <nav className="navbar navbar-light bg-light">
         <div className="container">
-          <a href="/#" className="navbar-brand font-weight-bold">
-            GimmeComments
+          <a href="/" className="navbar-brand font-weight-bold">
+            <img
+              src={gimmecomments_logo}
+              alt="logo"
+              style={{ height: '50px', cursor: 'pointer' }}
+            />
           </a>
 
           <form className="d-flex">
@@ -44,7 +48,7 @@ const Home = () => {
       {/* Body  */}
 
       <div className="container text-center mt-5 ">
-        <h1 className="font-weight-bold">Welcome to Gimmecomments server</h1>
+        <h1 className="font-weight-bold">Welcome to Gimme Comments</h1>
 
         <div className="container mt-5 ">
           GimmeComments is an innovative and cutting-edge web application that
