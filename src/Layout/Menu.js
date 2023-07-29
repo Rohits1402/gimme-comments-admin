@@ -1,19 +1,19 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Menu() {
   const logOut = () => {
-    localStorage.removeItem("gimme_comment_access_token");
-    window.location.reload();
-  };
+    localStorage.removeItem('gimme_comment_access_token')
+    window.location.reload()
+  }
 
   return (
     <>
       <aside
         className="main-sidebar sidebar-dark-primary elevation-4"
-        style={{ background: "#775DA8", position: "fixed" }}
+        style={{ background: '#775DA8', position: 'fixed' }}
       >
-        <div className="sidebar" style={{ height: "99vh" }}>
+        <div className="sidebar" style={{ height: '99vh' }}>
           {/* <div className="form-inline">
             <div className="input-group mt-2" data-widget="sidebar-search">
               <input
@@ -47,7 +47,7 @@ export default function Menu() {
 
               <li
                 className="nav-header rounded-2 text-bold my-2 "
-                style={{ background: "#6c4da9" }}
+                style={{ background: '#6c4da9' }}
               >
                 SETTINGS
               </li>
@@ -58,7 +58,7 @@ export default function Menu() {
                 </Link>
               </li>
               <li className="nav-item">
-                <a href="#" className="nav-link" onClick={logOut}>
+                <a href="/#" className="nav-link" onClick={logOut}>
                   <i className="nav-icon fas fa-sign-out-alt" />
                   <p>Log Out</p>
                 </a>
@@ -68,5 +68,5 @@ export default function Menu() {
         </div>
       </aside>
     </>
-  );
+  )
 }

@@ -1,7 +1,7 @@
 import { React, useState } from 'react'
 import Swal from 'sweetalert2'
 import axios from '../../../Utils/axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 const Toast = Swal.mixin({
   toast: true,
@@ -150,6 +150,10 @@ const VerifyAccount = () => {
           {page === 2 && 'Verify Account'}
         </button>
       </form>
+
+      <Link to="/sign-in">
+        <button className="btn btn-link w-100 mt-2">Sign In</button>
+      </Link>
     </>
   )
 }
