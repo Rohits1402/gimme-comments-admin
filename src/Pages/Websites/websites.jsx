@@ -64,7 +64,7 @@ const Website = () => {
           return true;
         } else {
           if (
-            category["website_title"]
+            category["website_name"]
               .toLowerCase()
               .includes(searchTermFilter.toLowerCase())
           ) {
@@ -293,6 +293,7 @@ const ManageWebsiteModal = ({ data, fetchWebsiteData }) => {
   const handleAddWebsite = async () => {
     try {
       setIsLoading(true);
+      const res = await axios().post(`/api/v1/websites`, localData);
       Toast.fire({
         icon: "success",
         title: "Website added",
@@ -548,7 +549,7 @@ const AddCodeModal = ({ data }) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">
-                Insallation
+                Installation
               </h5>
               <button
                 type="button"
