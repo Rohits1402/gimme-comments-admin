@@ -138,6 +138,11 @@ const Login = () => {
           Create new Account
         </button>
       </Link>
+      <hr style={{ width: '80vw', margin: '0 auto' }} />
+
+      <Link to="/">
+        <button className="btn btn-link w-100 mt-2">Go Home</button>
+      </Link>
     </>
   )
 }
