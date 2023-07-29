@@ -29,7 +29,7 @@ const Home = () => {
             <img
               src={gimmecomments_logo}
               alt="logo"
-              style={{ height: '60px', cursor: 'pointer' }}
+              style={{ height: '50px', cursor: 'pointer' }}
             />
           </a>
 
