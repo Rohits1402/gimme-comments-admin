@@ -1,70 +1,41 @@
-# Getting Started with Create React App
+# Gimme Comments 
+> Providing Comments as a Service
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Table of Contents 📕
+- [Gimme Comments](#gimme-comments)
+- [Components](#components)
+- [Flow of Application](#flow-of-application)
+- [Documents](#documents)
+- [Tools and Technology](#tools-and-technology)
+- [Live Examples](#live-examples)
 
-## Available Scripts
+# Gimme Comments
 
-In the project directory, you can run:
+This project aims to demonstrate the working of a server providing comments as a service. We
+will provide this service with a website called Gimme Comment that provides comment box
+functionality to other third-party websites that do not intend to create their comment box. 
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Components
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* Gimme Comments Admin ( [Github Link](https://github.com/Proj-Beluga/gimme-comments-admin) | [See live](https://gimme-comments-admin.vercel.app/) )
+* Gimme Comments Server ( [Github Link](https://github.com/Proj-Beluga/gimme-comments-server) | [See live](https://gimme-comments-server.onrender.com/) )
+* Gimme Comments Client ( [Github Link](https://github.com/Proj-Beluga/gimme-comments-client) )
 
-### `npm test`
+## Flow of Application
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Application Flow | Authentication Flow |
+| ---------------- | ------------------- |
+| <img width="1604" alt="Home Page" src="https://raw.githubusercontent.com/Proj-Beluga/gimme-comments-admin/main/Assets/ApplicationFlow.png">  Application Flow | <img width="1604" alt="Home Page" src="https://raw.githubusercontent.com/Proj-Beluga/gimme-comments-admin/main/Assets/AuthenticationFlow.png">  Authentication Flow |
 
-### `npm run build`
+## Documents
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* [Presentation](https://raw.githubusercontent.com/Proj-Beluga/gimme-comments-admin/main/Assets/GimmeCommentsPresentation.pdf)
+* [Report](https://raw.githubusercontent.com/Proj-Beluga/gimme-comments-admin/main/Assets/GimmeCommentsReport.pdf)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Tools and Technology
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* The Front-end is created in **React.js** and **Bootstrap**. 
+* For creating Back-end, we used **Express and Nodejs**. For the database, we used **MongDB Atlas**. We created a very flexible and versatile foundation for our codebase, so that in future its functionality could be easily extended and new agents could be easily added into it.
+* For hosting we used **Vercel** for Admin Panel and **Render** for server hosting which is a cloud platform that enables developers to host websites and web services that deploy instantly, scale automatically, and require no supervision.
+* Other technologies includes **AWS S3** bucket for storing profile images of users and **Send Grid** email service for user verification using OTP.
